@@ -21,8 +21,8 @@ set background=light
 :au VimEnter pico* set wrap
 
 syntax on
-set list
-set listchars=tab:>-,trail:%,extends:@
+"set list
+"set listchars=tab:>-,trail:%,extends:@
 
 
 au BufEnter *.cpp,*.c,*.cc,*.C,*.h,*.java,*.pl set cindent
