@@ -1,0 +1,326 @@
+#!/usr/bin/perl
+###############################################################################
+# GetQuote - Retrieves stock data for given ticker symbol(s), from
+#	     given source which can be one of the following :
+#			usa		: US Markets
+#			europe		: European Markets
+#			canada		: Canadian Markets
+#			australia	: Australian Markets
+#			asia		: Asian Markets
+#
+# Requires: Script requires at least perl 5.005, patch 3.
+#           Script must have the Finance::Quote module installed.  This module
+#           in turn requires the LWP modules (which in turn have their own 
+#           reqs).  See CPAN for exact requirements for LWP: 
+#           http://www.perl.com/CPAN-local//modules/by-module/LWP/
+# Author:   M.R.Muthu Kumar ( m_muthukumar@users.sourceforge.net) 
+#            with the help of getstockquote.pl script by 
+#            William Rhodes <wrhodes@27.org>
+#
+# Version:  0.1 - 7/30/2001 - Initial Release. 
+# Version:  0.2 - 8/07/2001 - Made provision to check Asian Markets
+#			      explicitly. 
+#
+# See the accompanying README and COPYING  file for more information.
+# 
+# Copyright (C) 2001 M.R.Muthu Kumar  <m_muthukumar@users.sourceforge.net>.
+#
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later 
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more 
+# details.
+#
+# The information that you obtain with this script may be copyrighted by Yahoo! 
+# Inc., and is governed by their usage license. See 
+# http://www.yahoo.com/docs/info/gen_disclaimer.html for more information.
+#
+# The information that you obtain with this script may be copyrighted by the 
+# ASX, and is governed by its usage license.  See 
+# http://www3.asx.com.au/Fdis.htm for more information.
+#
+# The information that you obtain with this script may be copyrighted by 
+# TIAA-CREF, and is governed by its usage license.
+#
+# Other copyrights and conditions may apply to data fetched via this script.
+#
+# Submitting changes back to the author is not required but certainly 
+# encouraged.  Bug fixes are also greatly appreciated.
+###############################################################################
+
+use strict;
+use Finance::Quote;
+use IO::File;
+
+# Our defaults, can be modified from args; see readme
+#
+my $font_size = 2;
+my $verbose = 0;
+my $text_output = 0;
+my $delim = "!";
+
+my @months = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" );
+
+my $StockDir = ".smStockReports";
+
+#
+#  Change to users home directory. We used to dump into /tmp
+#  but using home dir instead avoids multiple users interfering
+#  with one another. (Yeah, we could "unique-ize" the filenames, but
+#  this is easier for now...)
+#
+my $home = $ENV{HOME} || (getpwuid($<))[7];
+chdir() || chdir($home) or die "chdir '$home' failed: $!";
+
+unless(-e $StockDir) {
+  mkdir $StockDir, 0755 or die "unable to mkdir '$StockDir': $!";
+}
+chdir $StockDir or die "chdir '$StockDir' failed: $!";
+
+my $DataFileName = "stockinfo.dat";
+
+#
+#  Write out the stuff we need to the Data File. This is the file that will
+#  be read by GKrellStock.
+#
+my $fh = new IO::File ">$DataFileName" 
+  or die "unable to write '$DataFileName': $!";
+
+my @tickers = @ARGV;
+
+# Get rid of puncuation in @ARGV.  This will filter out metacharacters and
+# such, which makes the script marginally more safe
+#
+foreach (@tickers) { s/[^a-zA-Z0-9\-=_\.\^]//; }
+
+# Check the input to make sure we can look stuff up
+#
+@tickers = CheckInput(@tickers);
+
+
+# Get a new Finance::Quote object
+#
+my $quote_src = $tickers[0];
+
+my $quote;
+if ( $quote_src eq "asia" ) {
+  $quote = Finance::Quote->new("Yahoo::Asia");
+}
+else {
+  $quote = Finance::Quote->new();
+}
+
+# Override LWP's 120 second timeout, throw error if we time out
+# Set this pretty short if using as a server-side exec
+#
+ReturnError("No data available. $!\n") unless ($quote->timeout(10));
+
+# Load the quotes hash for getting data
+#
+#my %quotes = $quote->$quote_src(@tickers);
+
+shift(@tickers);		# Get rid of the quote source
+my %quotes = $quote->fetch($quote_src, @tickers);
+
+# get the ticker data, print it out
+#
+#shift(@tickers);		# Get rid of the quote source
+if ( $text_output )
+{
+  for (@tickers) { print PrintData($_); }
+}
+else
+{
+  for (@tickers) { my $text_line = PrintData($_); 
+                   print $fh $text_line;
+  }
+}
+
+close $fh or die "error closing '$DataFileName': $!";
+
+###############################################################################
+# SUBROUTINES
+###############################################################################
+
+# You have to specify a valid quote source and at least one ticker symbol
+# If this script was a stand-alone CGI, it probably ought to use CGI::CARP to
+# send errors to the browser.
+#
+sub CheckInput {
+    my @input = @_;
+    my ($src_name, $src_val, $src_err, $src_found);
+    my %ticker_src;
+
+    $ticker_src{australia} = "Australian SE";
+    $ticker_src{asia} = "Asian Markets";
+    $ticker_src{dwsfunds} = "Deutsche Bank Gruppe Funds";
+    $ticker_src{tiaacref} = "TIAA-CREF";
+    $ticker_src{troweprice} = "Quotes from T. Rowe Price";
+    $ticker_src{europe} = "European Markets";
+    $ticker_src{canada} = "Canadian Markets";
+    $ticker_src{usa} = "USA Markets";
+    $ticker_src{nyse} = "NYSE";
+    $ticker_src{nasdaq} = "NASDAQ";
+    $ticker_src{uk_unit_trusts} = "UK Unit Trusts";
+    $ticker_src{vanguard} = "Quotes from Vanguard Group";
+    $ticker_src{vwd} = "Vereinigte Wirtschaftsdienste GmbH";
+
+    # Check for verbose, shift @input anyway
+    #
+    if ($input[0] =~ /\-\-verbose=yes/i) {
+        $verbose = 1;
+        shift(@input);
+    } elsif ($input[0] =~ /\-\-verbose=no/i) {
+        $verbose = 0;
+        shift(@input);
+    }
+
+    # Check for text, shift @input anyway
+    #
+    if ($input[0] =~ /\-\-text=yes/i) {
+        $text_output = 1;
+        shift(@input);
+    } elsif ($input[0] =~ /\-\-text=no/i) {
+        $text_output = 0;
+        shift(@input);
+    }
+
+    # No quote source or symbols
+    #
+    if (!$input[0]) {
+        $src_err .= "$0: Error: No quote source given.  Quote source must be one of the following:<br>\n";
+        while (($src_name, $src_val) = each(%ticker_src)) {
+            $src_err .= "  $src_name - $src_val<br>\n";
+        }
+        ReturnError("$src_err\n");
+    } elsif (!$input[1]) {
+        ReturnError("$0: Error: No symbols given.");
+    }
+
+    # Check for invalid quote source
+    #
+    $src_found = 0;
+    foreach $src_name (keys %ticker_src) {
+        if ($src_name eq lc($input[0])) {
+            $src_found = 1;
+        }
+    }
+
+    # Throw an error unless we had a valid quote source
+    #
+    unless ($src_found) {
+        $src_err .= "$0: Error: Invalid quote source \"$input[0]\". ";
+        $src_err .= "Quote source must be one of the following:<br>\n";
+        while (($src_name, $src_val) = each(%ticker_src)) {
+            $src_err .= "  $src_name - $src_val<br>\n";
+        }
+        ReturnError($src_err);
+    }
+
+    # So everything matched, send out args back
+    #
+    return(@input);
+
+} # End CheckInput
+
+
+# Return each ticker data 
+#
+sub PrintData {
+    my ($key, $value, $name, $output);
+    my %data;
+    my %detail_data;
+    my $ticker = shift || die "No ticker data given! $!\n";
+    if ($quote_src ne "tiaacref") {
+        $ticker = uc($ticker);
+    }
+
+    # Our hash of stuff that we want to return as table rows
+    # We have our default, and then add to it if $verbose is set
+    #
+    $data{a_Last_Price} = $quotes{"$ticker", "last"};
+    $data{b_Change} = $quotes{"$ticker", "net"};
+
+    $detail_data{a_Name} = $quotes{"$ticker", "name"};
+    $detail_data{b_Todays_Range} = $quotes{"$ticker", "day_range"};
+
+    my $lt_date = $quotes{ "$ticker", "date" };
+
+    my ($mm, $dd, $yy) = split /\//, $lt_date;
+    my $new_date =  "$months[ $mm -1 ] $dd, $yy";
+
+    $detail_data{c_Last_Trade} = $new_date . " at " . $quotes{"$ticker", "time"};
+    $detail_data{d_52_Week_Range} = $quotes{"$ticker", "year_range"};
+    $detail_data{e_PE_Ratio} = $quotes{"$ticker", "pe"};
+    $detail_data{f_Earnings_per_share} = $quotes{"$ticker", "eps"};
+    $detail_data{g_Volume} = $quotes{"$ticker", "volume"} . " shares";
+    $detail_data{h_Exchange} = $quotes{"$ticker", "exchange"};
+
+    # Volume needs commas to look good
+    #
+    $detail_data{g_Volume} = reverse($detail_data{g_Volume});
+    $detail_data{g_Volume} =~ s/(\d\d\d)(?=\d)(?!\d*\.)/$1,/g;
+    $detail_data{g_Volume} = reverse($detail_data{g_Volume});
+
+    $output = "$ticker ";
+
+    foreach $key (sort keys %data) {
+        $name = $key;                 # Need to save $key for hash lookups
+        $name =~ s/^[a-z]_//;         # Get rid of sorting characters
+        $name =~ s/_/ /g;             # Get rid of underscores
+        $data{$key} = "N/A" if ($data{$key} eq "");     # Don't show empty values
+
+        # We want at least two decimal places in some fields
+        #
+        if ($name =~ /Change|Last|High|Low|Open|Close|Bid|Ask/i) {
+            $data{$key} =~ s/^(\d+$)$/$1\.00/;
+            $data{$key} =~ s/^(\d+\.\d)$/$1\0/;
+        }
+
+        if ( $text_output )
+        {
+          $output .= "$name: $data{$key} \n ";
+        }
+        else
+        {
+          $output .= "$data{$key} ";
+        }
+    }
+
+    $output .= "$delim";
+
+    foreach $key (sort keys %detail_data) {
+        $name = $key;                 # Need to save $key for hash lookups
+        $name =~ s/^[a-z]_//;         # Get rid of sorting characters
+        $name =~ s/_/ /g;             # Get rid of underscores
+        $detail_data{$key} = "N/A" if ($detail_data{$key} eq "");     # Don't show empty values
+
+        # We want at least two decimal places in some fields
+        #
+        if ($name =~ /Change|Last|High|Low|Open|Close|Bid|Ask/i) {
+            $detail_data{$key} =~ s/^(\d+$)$/$1\.00/;
+            $detail_data{$key} =~ s/^(\d+\.\d)$/$1\0/;
+        }
+
+        $output .= "$name: $detail_data{$key}$delim";
+    }
+
+
+    $output .= "\n";
+
+    return($output);
+} # End GetData
+
+
+# Prints a usage and error message to STDOUT, exits with -1
+#
+sub ReturnError {
+    my $error = shift;
+    my $usage = "Usage: $0 [--verbose=yes|no] &lt;quote_source&gt; &lt;ticker1&gt; [ticker2] ...\n";
+    print $error . "<br>" . $usage;
+    exit;
+} # End ReturnError
