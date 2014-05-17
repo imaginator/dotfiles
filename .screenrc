@@ -121,7 +121,7 @@ caption always           "%?%F%{= Kk}%:%{=u kR}%?  %h %-024=%{+b} %C%a %D %d %M 
 hardstatus alwayslastline "%{= kR} %-Lw%{=b Kk} %n%f %t %{-}%+Lw %=%{= dd}"
 
 # default windows
-screen -t "htop" 1 htop --delay=50
-screen -t "syslog" 2 tail -F /var/log/syslog
-screen -t "rtorrent" 3 rtorrent
-screen -t "shell" 4 zsh
+screen -t "htop" 0 htop --delay=50
+screen -t "syslog" 1 tail -F /var/log/syslog
+screen -t "rtorrent" 2 rtorrent
+screen -t "shell" 3 zsh
