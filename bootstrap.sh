@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
-cd "$(dirname "${BASH_SOURCE}")"
-git pull origin master
-function doIt() {
-	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
-		--exclude "README.md" --exclude ".gitignore" -av --no-perms . ~
-	source ~/.bash_profile
-}
+#cd "(dirname "${BASH_SOURCE}")"
+cd ~/dotfiles
+#git pull origin master
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt
-else
-	read -p "This may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1
-	echo
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		doIt
-	fi
-fi
-unset doIt
+for dotfile in  `find ~/dotfiles -not -name '.git' -not -name 'README.md' -not -name 'bootstrap.sh' -not -name ".DS_Store" -depth 1 -exec basename {} \;`
+do
+  echo "$dotfile to be replaced"
+  if [ ! -L ~/"$dotfile" ]
+    then
+    echo "$dotfile is not a symlink. Stopping."
+    exit 0
+  fi
+  unlink ~/$dotfile
+  ln -s ~/dotfiles/$dotfile ~/$dotfile
+done
+
