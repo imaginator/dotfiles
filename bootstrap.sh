@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-cd "$(dirname "${BASH_SOURCE}")"
-git pull origin master
-function doIt() {
-	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
-		--exclude "README.md" --exclude ".gitignore" -av --no-perms . ~
-	source ~/.bash_profile
-}
+#cd "(dirname "${BASH_SOURCE}")"
+cd ~/dotfiles
+#git pull origin master
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt
-else
-	read -p "This may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1
-	echo
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		doIt
-	fi
-fi
-unset doIt
+for dotfile in  `find ~/dotfiles -maxdepth 1 ! \( -name ".git" -o -name "README.md" -o -name "bootstrap.sh" -o -name ".DS_Store" -o -name "dotfiles" -o -name ".gitignore" \)  -exec basename {} \;`
+do
+  if [ -L ~/"$dotfile" ]
+  then
+    echo "$dotfile: is a symlink. Nothing to do"
+  elif [ -f ~/"$dotfile" ] || [ -d ~/"$dotfile" ]
+  then
+    echo "$dotfile: a file or directory already exists here. Remove so it can be automatically symlinkd"
+  else
+    ln -s ~/dotfiles/$dotfile ~/$dotfile
+    echo "$dotfile symlined into place"
+  fi
+done
+
