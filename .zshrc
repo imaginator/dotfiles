@@ -34,7 +34,7 @@ plugins=(git screen)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:/usr/local/java/bin:/home/simon/bin
+export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin
 
 export PERL_LOCAL_LIB_ROOT="/home/simon/perl5";
 export PERL_MB_OPT="--install_base /home/simon/perl5";
