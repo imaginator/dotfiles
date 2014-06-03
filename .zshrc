@@ -47,3 +47,9 @@ export PATH="/home/simon/perl5/bin:$PATH";
 if [[ -n ${DISPLAY} ]]; then
     xrdb -merge ~/dotfiles/.Xresources.solarized-light
 fi
+
+# 
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"
+
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
