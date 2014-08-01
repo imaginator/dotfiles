@@ -10,6 +10,8 @@ ZSH_THEME="robbyrussell"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias 'dus=du -sckx * | sort -nr'
+
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
@@ -34,7 +36,7 @@ plugins=(git rvm debian rails tmux)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
-export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin:~/.rvm/bin:
+export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin:~/.rvm/bin:/Users/simon/Development/adt-bundle-mac-x86_64-20140702/sdk/tools:/Users/simon/Development/adt-bundle-mac-x86_64-20140702/sdk/platform-tools:
 
 export PERL_LOCAL_LIB_ROOT="/home/simon/perl5";
 export PERL_MB_OPT="--install_base /home/simon/perl5";
