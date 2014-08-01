@@ -46,3 +46,4 @@ export PATH="/home/simon/perl5/bin:$PATH";
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
 
+export EDITOR=/usr/bin/vim
