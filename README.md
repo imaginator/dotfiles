@@ -1,6 +1,4 @@
-dotfiles
-========
-
+#dotfiles
 
 local changes -> master
 
@@ -11,8 +9,8 @@ master -> local machine
 
 `bootstrap.sh`
 
-Making things more like $HOME
-=============================
+##Making things more like $HOME
+
 ```bash
 apt-get install git tmux zsh
 scp -r simon@bunker.imaginator.com:~/.ssh ~
