@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 #cd "(dirname "${BASH_SOURCE}")"
 cd ~/dotfiles
-#git pull origin master
+
+git pull 
+git submodule init
+git submodule update
 
 for dotfile in  `find ~/dotfiles -maxdepth 1 ! \( -name ".git" -o -name "README.md" -o -name "bootstrap.sh" -o -name ".DS_Store" -o -name "dotfiles" -o -name ".gitignore" \)  -exec basename {} \;`
 do
