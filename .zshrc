@@ -55,10 +55,6 @@ export LANG=en_US.UTF-8
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
 
-<<<<<<< HEAD
 # for RVM to work
 source ~/.profile
-
-=======
 export EDITOR=/usr/bin/vim
->>>>>>> 19f0cb78c3ba77611ae52d0511b88a31aee6a98a
