@@ -7,7 +7,7 @@ for dotfile in  `find ~/dotfiles -maxdepth 1 ! \( -name ".git" -o -name "README.
 do
   if [ -L ~/"$dotfile" ]
   then
-    echo "$dotfile: is a symlink. Nothing to do"
+    echo "$dotfile: ok"
   elif [ -f ~/"$dotfile" ] || [ -d ~/"$dotfile" ]
   then
     echo "$dotfile: a file or directory already exists here. Remove so it can be automatically symlinkd"

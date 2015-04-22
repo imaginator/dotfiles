@@ -1,9 +1,21 @@
 [user]
 	name = imaginator
         email = simon@imaginator.com
-[http]
-        proxy =
 
 [filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
+	required = true
+	clean = git media clean %f
+	smudge = git media smudge %f
+
+#[http]
+#	proxy = http://390019940018:171277@172.17.1.5:3128
+#[https]
+#	proxy = http://390019940018:171277@172.17.1.5:3128
+[filter "hawser"]
+	clean = git hawser clean %f
+	smudge = git hawser smudge %f
+	required = true
+[filter "lfs"]
+	clean = git lfs clean %f
+	smudge = git lfs smudge %f
+	required = true
