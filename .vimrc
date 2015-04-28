@@ -38,11 +38,6 @@ map <F9> :w<CR>:!aspell -d de_DE -e -c %<CR>:e<CR>
 map <F12> :q!# Quit without saving 
 map  !}fmt -72
 
-syntax enable
-set background=dark
-colorscheme solarized
-
-"or, for the light background mode of Solarized:
 
 syntax enable
 set background=light
