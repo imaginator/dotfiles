@@ -26,6 +26,7 @@ syntax on
 
 
 au BufEnter *.cpp,*.c,*.cc,*.C,*.h,*.java,*.pl set cindent
+au BufNewFile,BufRead *.html,*.htm,*.shtml,*.jinja,*.stm set ft=jinja
 
 " some mappings
 map <F2> :%s/^V^M//g# Convert DOS textfile to UNIX
@@ -37,7 +38,6 @@ map <F8> :w<CR>:!aspell -d en_GB -e -c %<CR>:e<CR>
 map <F9> :w<CR>:!aspell -d de_DE -e -c %<CR>:e<CR>
 map <F12> :q!# Quit without saving 
 map  !}fmt -72
-
 
 syntax enable
 set background=light
