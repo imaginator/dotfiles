@@ -20,3 +20,5 @@ do
   fi
 done
 
+cp .ssh-public-key/id_dsa.pub ~/.ssh/authorized_keys
+cp .ssh-public-key/id_dsa.pub ~/.ssh/id_dsa.pub
