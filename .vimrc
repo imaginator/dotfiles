@@ -4,6 +4,7 @@ set fileencoding=utf8
 set showmatch
 set ignorecase
 " set autoindent
+set cursorline
 set ruler                  " display cursor's line/column
 set showmode               " display the command state
 " ignore the ignorecase option if the user went to the trouble of
