@@ -4,6 +4,7 @@ set fileencoding=utf8
 set showmatch
 set ignorecase
 " set autoindent
+set cursorline
 set ruler                  " display cursor's line/column
 set showmode               " display the command state
 " ignore the ignorecase option if the user went to the trouble of
@@ -26,6 +27,13 @@ syntax on
 
 
 au BufEnter *.cpp,*.c,*.cc,*.C,*.h,*.java,*.pl set cindent
+au BufNewFile,BufRead *.html,*.htm,*.shtml,*.jinja,*.stm set ft=jinja
+
+" tab handling
+set nocompatible
+set tabstop=2
+set shiftwidth=2
+set expandtab
 
 " some mappings
 map <F2> :%s/^V^M//g# Convert DOS textfile to UNIX
@@ -38,7 +46,14 @@ map <F9> :w<CR>:!aspell -d de_DE -e -c %<CR>:e<CR>
 map <F12> :q!# Quit without saving 
 map  !}fmt -72
 
-
 syntax enable
 set background=light
 colorscheme solarized
+
+set nocompatible
+filetype plugin indent on
+
+" avoid .swp files
+set backupdir=/tmp//
+set directory=/tmp//
+set undodir=~/tmp//
