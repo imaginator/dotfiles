@@ -29,6 +29,12 @@ syntax on
 au BufEnter *.cpp,*.c,*.cc,*.C,*.h,*.java,*.pl set cindent
 au BufNewFile,BufRead *.html,*.htm,*.shtml,*.jinja,*.stm set ft=jinja
 
+" tab handling
+set nocompatible
+set tabstop=2
+set shiftwidth=2
+set expandtab
+
 " some mappings
 map <F2> :%s/^V^M//g# Convert DOS textfile to UNIX
 map <F3> :!bash # Run bash 
@@ -43,3 +49,11 @@ map  !}fmt -72
 syntax enable
 set background=light
 colorscheme solarized
+
+set nocompatible
+filetype plugin indent on
+
+" avoid .swp files
+set backupdir=/tmp//
+set directory=/tmp//
+set undodir=~/tmp//
