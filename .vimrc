@@ -4,7 +4,6 @@ set fileencoding=utf8
 set showmatch
 set ignorecase
 " set autoindent
-set cursorline
 set ruler                  " display cursor's line/column
 set showmode               " display the command state
 " ignore the ignorecase option if the user went to the trouble of
@@ -25,6 +24,8 @@ syntax on
 "set list
 "set listchars=tab:>-,trail:%,extends:@
 
+set cursorline
+au ColorScheme * highlight CursorLine   term=underline guibg=NONE cterm=underline gui=underline
 
 au BufEnter *.cpp,*.c,*.cc,*.C,*.h,*.java,*.pl set cindent
 au BufNewFile,BufRead *.html,*.htm,*.shtml,*.jinja,*.stm set ft=jinja
