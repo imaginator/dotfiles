@@ -6,4 +6,4 @@
 #  logger "Ended scrub of $dn"
 #done
 # turns out that this command will scrub all filesystems on the device 
-btrfs -c3 -n7 scrub start -B /
+ionice -c3 nice btrfs -c3 -n7 scrub start -B /
