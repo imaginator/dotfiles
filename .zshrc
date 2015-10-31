@@ -58,3 +58,6 @@ export LC_ALL="en_US.UTF-8"
 # for RVM to work
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export EDITOR=/usr/bin/vim
+
+# added by travis gem
+[ -f /Users/simon/.travis/travis.sh ] && source /Users/simon/.travis/travis.sh
