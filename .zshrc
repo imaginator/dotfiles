@@ -43,15 +43,14 @@ plugins=(git debian brew docker tmux)
 source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
+<<<<<<< HEAD
 export ANDROID_HOME=/usr/local/opt/android-sdk
 export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:~/bin:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin:~/.rvm/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:~/Development/google-cloud-sdk/bin/
+=======
+export PATH=/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/home/simon/bin
+>>>>>>> 1ebd86b8b64af26566b1562ed3732a442c9a93c5
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
-
-# for RVM to work
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 export EDITOR=/usr/bin/vim
 
 # added by travis gem
