@@ -44,12 +44,7 @@ source $ZSH/oh-my-zsh.sh
 
 # Customize to your needs...
 export ANDROID_HOME=/usr/local/opt/android-sdk
-export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin:~/.rvm/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:~/Development/google-cloud-sdk/bin/
-export PERL_LOCAL_LIB_ROOT="/home/simon/perl5";
-export PERL_MB_OPT="--install_base /home/simon/perl5";
-export PERL_MM_OPT="INSTALL_BASE=/home/simon/perl5";
-export PERL5LIB="/home/simon/perl5/lib/perl5/x86_64-linux-gnu-thread-multi:/home/simon/perl5/lib/perl5";
-export PATH="/home/simon/perl5/bin:$PATH";
+export PATH=$PATH:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/usr/local/games:~/bin:/usr/local/java/bin:/usr/local/Cellar/ruby/2.0.0-p247/bin:/home/simon/bin:~/.rvm/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:~/Development/google-cloud-sdk/bin/
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 

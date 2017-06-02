@@ -1,5 +1,5 @@
 [user]
-	email = simon@buddycloud.com
+	email = simon@imaginator.com
 	name = Simon Tennant
 [push]
 	default = simple
@@ -7,3 +7,5 @@
 	clean = git lfs clean %f
 	smudge = git lfs smudge %f
 	required = true
+[color]
+	ui = auto
