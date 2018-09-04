@@ -1,9 +1,17 @@
+execute pathogen#infect()
+syntax enable
+set background=dark
+colorscheme solarized
+
+
+
+
+
 set nocompatible
 set encoding=utf8
 set fileencoding=utf8
 set showmatch
 set ignorecase
-" set autoindent
 set ruler                  " display cursor's line/column
 set showmode               " display the command state
 " ignore the ignorecase option if the user went to the trouble of
@@ -16,7 +24,6 @@ set hlsearch
 " show status line
 set laststatus=2
 " Background is dark for our terminals and for the console
-set background=light
 :au VimEnter pico* set tw=72
 :au VimEnter pico* set wrap
 
@@ -46,10 +53,6 @@ map <F8> :w<CR>:!aspell -d en_GB -e -c %<CR>:e<CR>
 map <F9> :w<CR>:!aspell -d de_DE -e -c %<CR>:e<CR>
 map <F12> :q!# Quit without saving 
 map  !}fmt -72
-
-syntax enable
-set background=light
-colorscheme solarized
 
 set nocompatible
 filetype plugin indent on
