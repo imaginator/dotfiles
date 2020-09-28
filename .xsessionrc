@@ -1,0 +1,12 @@
+# ~/.xsessionrc is executed on Debian (and derivatives such as Ubuntu, Linux Mint, etc.)
+# by the X startup scripts on a GUI login, for all session types and (I think) from 
+# all display managers. It's also executed from startx if the user doesn't have a .xinitrc, 
+# because in that case startx falls back on the same session startup scripts that 
+# are used for GUI login. It's executed relatively early, after loading resources 
+# but before starting any program such as a key agent, a D-Bus daemon, etc. 
+# It typically sets variables that can be used by later startup scripts. 
+# It doesn't have any official documentation that I know of, you have to dig into the 
+# source to see what works.
+
+TZ='Europe/Berlin' ; export TZ
+
