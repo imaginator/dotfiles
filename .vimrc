@@ -55,6 +55,7 @@ set nocompatible
 filetype plugin indent on
 
 " avoid .swp files
-set backupdir=/tmp//
-set directory=/tmp//
-set undodir=~/tmp//
+set nobackup
+set backupdir=/tmp/
+set directory=/tmp/
+set undodir=~/tmp/
