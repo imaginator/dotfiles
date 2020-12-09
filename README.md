@@ -4,7 +4,7 @@ Making things more like $HOME
 
 ```bash
 # as root
-apt-get install git tmux zsh
+apt-get install git tmux zsh vim
 useradd simon -s /usr/bin/zsh -m
 mkdir ~simon/.ssh
 cat .ssh/authorized_keys  >> ~simon/.ssh/authorized_keys
