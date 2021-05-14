@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+   echo "Usage: $0 hostname wais-password"
+      exit
+      fi
+
+      wget=/home/sparks/local/bin/wget
+
+      wget -O -  --http-user=simonhg --http-passwd=babymax99 "http://www.netops.aol.com/cgi-bin/oob/gen_oob.pl?device_name=$1&site=all&action=search" 2> /dev/null  | tr "<" "\"" | tr ">" "\"" | tr -s "\"" | grep "oob.aol.com" | grep telnet | awk -F\" '{print $6 " - " $5}' | tr -d "\/" | tr ":" " "
+ 

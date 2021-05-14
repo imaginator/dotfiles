@@ -1,0 +1,22 @@
+#!/bin/sh
+cd ~
+# do all the rc files
+rsync -varpog \
+    --progress \
+    --bwlimit=32 \
+    --safe-links \
+    --exclude "*xover-cache*" \
+    --exclude "*history.dat" \
+    --exclude "cache/" \
+    --exclude "*pr0n*" \
+    --exclude "*.lock.*" \
+    --exclude ".Xauthority" \
+    --exclude "*vmware*" \
+    --exclude "Cache" \
+    --exclude "News" \
+    --exclude "ImapMail" \
+    -e ssh \
+    -C \
+    simon@imaginator.com:'data bin .[^\.]*'  ~simon/
+
+exit

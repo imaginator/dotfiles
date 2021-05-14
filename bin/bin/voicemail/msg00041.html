@@ -1,0 +1,293 @@
+<!-- MHonArc v2.4.3 -->
+<!--X-Subject: voice/fax to email scripts etc. -->
+<!--X-From-R13: Ivyy Pnyynaglar <Ivyy.PnyynaglarNtrzf1.tbi.op.pn> -->
+<!--X-Date: 4 Mar 1999 03:30:11 &#45;0000 -->
+<!--X-Message-Id: 34F6DDB6.1F17042@gems1.gov.bc.ca -->
+<!--X-Content-Type: multipart/mixed -->
+<!--X-Derived: pl00003.pl -->
+<!--X-Head-End-->
+<!doctype html public "-//w3c//dtd html//en">
+<html>
+<head>
+<title>voice/fax to email scripts etc.</title>
+<link rev="made" href="mailto:Will.Ballantyne@gems1.gov.bc.ca">
+</head>
+<body bgcolor="#FFFFFF" text="#000000" link="#BB0000" vlink="#880000">
+<!--X-Body-Begin-->
+<!--X-User-Header-->
+<!--X-User-Header-End-->
+<!--X-TopPNI-->
+<HR>
+[<A HREF="msg00040.html">Date Prev</A>][<A HREF="msg00042.html">Date Next</A>][<A HREF="msg00057.html">Thread Prev</A>][<A HREF="msg00040.html">Thread Next</A>][<A HREF="mail20.html#00041">Date Index</A>][<A HREF="thrd20.html#00041">Thread Index</A>]
+<!--X-TopPNI-End-->
+<!--X-MsgBody-->
+<!--X-Subject-Header-Begin-->
+<H1>voice/fax to email scripts etc.</H1>
+<HR>
+<!--X-Subject-Header-End-->
+<!--X-Head-of-Message-->
+<UL>
+<LI><em>To</em>: <A HREF="mailto:discuss@vlug.org">discuss@vlug.org</A></LI>
+<LI><em>Subject</em>: voice/fax to email scripts etc.</LI>
+<LI><em>From</em>: Will Ballantyne &lt;<A HREF="mailto:Will.Ballantyne@gems1.gov.bc.ca">Will.Ballantyne@gems1.gov.bc.ca</A>&gt;</LI>
+<LI><em>Date</em>: Fri, 27 Feb 1998 15:37:26 +0000</LI>
+<LI><em>Delivered-To</em>: mailing list discuss@vlug.org</LI>
+<LI><em>Delivered-To</em>: moderator for discuss@vlug.org</LI>
+<LI><em>Mailing-List</em>: contact discuss-help@vlug.org; run by ezmlm</LI>
+<LI><em>Reply-To</em>: <A HREF="mailto:discuss@vlug.org">discuss@vlug.org</A></LI>
+<LI><em>Sender</em>: <A HREF="mailto:wballant@bc.sympatico.ca">wballant@bc.sympatico.ca</A></LI>
+</UL>
+<!--X-Head-of-Message-End-->
+<!--X-Head-Body-Sep-Begin-->
+<HR>
+<!--X-Head-Body-Sep-End-->
+<!--X-Body-of-Message-->
+<PRE>
+There seems to be some interest in the voice/fax to email stuff, so here
+are the scripts and instructions..  My apologies for the length of this
+note.
+
+Start by getting mgetty with vgetty.  This can be found at
+<A  HREF="http://alpha.greenie.net/mgetty/index.html">http://alpha.greenie.net/mgetty/index.html</A>. Note you need the voice
+component and that only comes in the beta release.
+
+To get the callerid info through the fax activation I modified faxrec.c
+as follows (this is in diff-u format):
+
+----------
+@@ -273,10 +273,12 @@
+      * note: stdout / stderr redirected to console, we don't
+      *       want the program talking to the modem
+      */
+-    sprintf( line, "%s %d >
+<HR><H3>Transfer interrupted!</H3>
+v/null",
++<I>    sprintf( line, "%s %d '%s' '%s' '%s' %d %s &gt;%s 2&gt;&amp;1 &lt;/dev/null",</I>
+                                         FAX_NOTIFY_PROGRAM,
+                                         fax_hangup_code,
+                                         fax_remote_id,
++<I>                                        CallerId,</I>
++<I>                                        CallName,</I>
+                                         pagenum,
+                                         fax_file_names,
+                                         CONSOLE);
+----------
+
+Make and install mgetty+vgetty and then customize the
+/usr/local/etc/mgetty+sendfax/voice.conf file.  The important part is to
+set message_program to activate the script, here is an extract from
+mine:
+
+----------
+#
+# Program called when a voice message has been received.
+# The argument is the filename of the recorded message.
+# The default value is "".
+#
+
+message_program redirect.pl
+----------
+
+If you are using a USR33.6 you will need to add this line to the
+/usr/local/etc/mgetty+sendfax/mgetty.config
+
+post-init-chat "" AT#CID=1 OK
+
+Other modems may need other customizations.  Check the mgetty
+documentation, it's quite good.
+
+For vgetty to answer your phone you will need to edit the /etc/inittab,
+in my case I added a line like this:
+
+# do the voice jig
+mo:235:respawn:/usr/local/sbin/vgetty /dev/modem
+
+Don't forget to "/sbin/init Q" so init reads the inittab.
+
+Next you need some modules from cpan (<A  HREF="http://www.cpan.org">http://www.cpan.org</A>).  You will
+need
+
+MIME-Lite-1.132.tar.gz
+MIME-tools-4.122.tar.gz
+Convert-BER-1.25.tar.gz
+perl-ldap-0.09.tar.gz
+
+After installing these, you need to put the redirect.pl script in
+/var/spool/voice and  the new_fax script in
+/usr/local/lib/mgetty+sendfax/.   The scripts should be attached to this
+note. Make sure you give them execute permissions.  You will need to
+customize some variables in the scripts, I've put them at the start of
+the scripts.
+
+That pretty much does it (unless I forgot a step ;).
+
+
+
+</PRE>
+<PRE>
+#!/usr/bin/perl
+# Copyright (c) 1999 Will Ballantyne. All rights reserved.
+# This package is free software; you can redistribute it and/or
+# modify it under the same terms as Perl itself.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE WRITER BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+#
+# convert a fax and email it
+
+use MIME::Lite;
+use Net::LDAP;
+
+$hostname = `hostname`;
+$timestamp = `date`;
+
+#
+# some variables to customize
+#
+$recipient = 'your.email@address.here';
+$directoryServer = 'ldap.yahoo.com';
+$directoryBase = '';
+$faxServerAddress = "fax\@$hostname";
+
+# customization beyond this point should not be required
+
+$ldap = Net::LDAP-&gt;new($directoryServer,
+                DN =&gt; "",
+                Password =&gt; "",
+                Port =&gt; 389,
+                Debug =&gt; 3,
+        ) or
+        die $@;
+
+$hangupCode = shift @ARGV;
+
+if ($hangupCode eq '0') {
+  $status = 'successful';
+}
+else {
+  $status = 'partial';
+}
+
+print "hangup: $hangupCode";
+
+$senderid = shift @ARGV;
+$callerid = shift @ARGV;
+$callername = shift @ARGV;
+$pages = shift @ARGV;
+
+@convertedFiles = ();
+
+$directoryInfo = "\n\nDirectory Profile\n";
+if ($callerid) {
+        for $filter (
+                "(facsimileTelephoneNumber=$callerid)"
+                ) {
+        $results = $ldap-&gt;search(
+                        base   =&gt; $directoryBase,
+                        filter =&gt; $filter
+        ) or die $@;
+        }
+
+        foreach $entry ($results-&gt;all_entries) {
+                foreach $attr (keys %{${%{$entry}}{attrs}}) {
+                        $directoryInfo .=  "$attr: " . 
+${${%{$entry}}{attrs}}{$attr}[0] . "\n";
+                }
+        }
+}
+
+#
+# convert each of the g3 files to tiff format 
+#
+$basetag = "unknown";
+
+for ($page = 1; defined($ARGV[$page - 1]) &amp;&amp; ($page &lt;= $pages); ++$page) {
+  $inFile = $ARGV[$page - 1];
+  if ($inFile =~ /(.*)\.(.*)/) {
+    $outFile = "$1$2.tif";
+    $basetag = $1;
+    push (@convertedFiles, $outFile);
+    system ("fax2tiff -M -o $outFile $inFile");
+  }
+}
+
+$msg = new MIME::Lite
+    From    =&gt; $faxServerAddress,
+    To      =&gt; "$recipient",
+    Subject =&gt; "FAX: $status receipt of $pages fax pages from $senderid",
+    Type    =&gt; 'multipart/mixed';
+
+attach $msg 
+    Type     =&gt; 'TEXT',   
+    Data     =&gt; 
+      "Fax transmission details:\ncaller id: $callerid\ncaller 
+name:$callername\n" .
+      $directoryInfo .
+      "\narchived raw g3 copy in $hostname:$basetag";  
+
+foreach (@convertedFiles) {
+  if (/(.*)\/(.*)$/) {
+    $filename = $2;
+  }
+  else {
+    $filename = "unknown.tif";
+  }
+
+  attach $msg
+    Type     =&gt; 'image/tiff',
+    Path     =&gt; "$_",
+    Encoding =&gt; 'base64',
+    Filename =&gt; "$filename";
+
+}
+
+$msg-&gt;send;
+
+sleep 5; # give the mail command time to complete
+
+foreach (@convertedFiles) {
+  system ("rm $_");
+}
+
+</PRE>
+<P><A HREF="pl00003.pl" >redirect.pl</A></P>
+
+<!--X-Body-of-Message-End-->
+<!--X-MsgBody-End-->
+<!--X-Follow-Ups-->
+<HR>
+<!--X-Follow-Ups-End-->
+<!--X-References-->
+<!--X-References-End-->
+<!--X-BotPNI-->
+<UL>
+<LI>Prev by Date:
+<STRONG><A HREF="msg00040.html">Linux World '99 -- Major Announcements.</A></STRONG>
+</LI>
+<LI>Next by Date:
+<STRONG><A HREF="msg00042.html">Re: [discuss] voice and fax</A></STRONG>
+</LI>
+<LI>Prev by thread:
+<STRONG><A HREF="msg00057.html">Re: [discuss] [Fwd: Re: [discuss] X Window control panel]</A></STRONG>
+</LI>
+<LI>Next by thread:
+<STRONG><A HREF="msg00040.html">Linux World '99 -- Major Announcements.</A></STRONG>
+</LI>
+<LI>Index(es):
+<UL>
+<LI><A HREF="mail20.html#00041"><STRONG>Date</STRONG></A></LI>
+<LI><A HREF="thrd20.html#00041"><STRONG>Thread</STRONG></A></LI>
+</UL>
+</LI>
+</UL>
+
+<!--X-BotPNI-End-->
+<!--X-User-Footer-->
+<!--X-User-Footer-End-->
+</BODY>
+</HTML>

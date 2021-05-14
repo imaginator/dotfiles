@@ -1,0 +1,774 @@
+#!/usr/bin/perl
+#
+# Robin Whittle  15 July 2001.  Copyright Public Domain.   Tab = 4 columns.
+#
+# Reads a directory full of Mbox format mailboxes and creates a set of 
+# Maildir format mailboxes.  Some details of this are to suit Courier 
+# IMAP's naming conventions for Maildir mailboxes.
+#
+#   http://www.inter7.com/courierimap/
+#
+# This is intended to automate the conversion of the old 
+# /var/spool/mail/blah file - with one call of this script - and to 
+# convert one or more mailboxes in a specifed directory with separate 
+# calls with other command line arguments.
+# 
+# Run this as the user - in these examples "blah".
+#
+# Tested on RedHat 7.1 Perl 5.6.0
+#
+# This script's web abode is http://www.firstpr.com.au/web-mail/ .
+#
+# I knew nothing of Perl before I wrote this.  I used the man and FAQ pages 
+# at http://www.perldoc.com and a chapter preview from http://www.cgi-perl.com.  
+#
+# The Mbox -> Maildir inner loop is from qmail's script mbox2maildir, which 
+# was kludged by Ivan Kohler in 1997 from convertandcreate (public domain) 
+# by Russel Nelson.  Both these convert a single mailspool file.
+#
+# The qmail distribution has a maildir2mbox.c program.
+#
+#
+# -----------------------------------------------------------------------------
+#
+#
+# mb2md  MBROOT MBDIR  [DEST]
+#
+#
+#   MBROOT       Directory, relative to the user's home directory,
+#                which is where the the MBDIR directory is located. 
+#
+#
+#   MBDIR        Directory, relative to MBROOT where the Mbox files
+#                are.  There are two special cases:
+#
+#                1 - "None"
+#
+#                2 - "Inbox"
+#
+#                If it is set to "None" then mailboxes in the MBROOT
+#                directory will be converted and placed in the
+#                DEST directory.  (Typically the Inbox directory 
+#                which in this instance is also functioning as a
+#                folder for other mailboxes.) 
+#
+#                If this is set to "Inbox" then the source will
+#                be the single mailbox at /var/spool/mail/blah for 
+#                user blah and the destination mailbox will be the 
+#                DEST mailbox itself.
+#
+#                Except in this "Inbox" case, the MBDIR directory
+#                name will be encoded into the new mailboxes' names.
+#                See the examples below.
+#      
+#                This script will not work with maibox files which
+#                contain spaces in their names.  
+#
+#                Expect trouble if an files in MBDIR directory
+#                are not proper Mbox mailbox files.
+#
+#                This does not save an UW IMAP dummy message file
+#                at the start of the Mbox file.  Small changes
+#                in the code could adapt it for looking for
+#                other distinctive patterns of dummy messages too. 
+#
+#                Don't let the source directory you give as MBDIR
+#                contain any "."s in its name, unless you want to
+#                create subfolders from the IMAP user's point of
+#                view.  See the example below.
+#
+#
+#   DEST         Directory relative to user's home directory where the
+#                Maildir format directories will be created.
+#                If not given, then the destination will be ~/Maildir .
+#                Typically, this is what the IMAP server sees as the
+#                Inbox and the folder for all user mailboxes.
+#  
+# 
+#
+#  Example
+#  =======
+#
+# We have a bunch of directories of Mbox mailboxes located at 
+# /home/blah/oldmail/ 
+#
+#     /home/blah/oldmail/fffff
+#     /home/blah/oldmail/ggggg
+#     /home/blah/oldmail/xxx/aaaa
+#     /home/blah/oldmail/xxx/bbbb
+#     /home/blah/oldmail/xxx/cccc
+#     /home/blah/oldmail/xxx/dddd
+#     /home/blah/oldmail/yyyy/huey
+#     /home/blah/oldmail/yyyy/duey
+#     /home/blah/oldmail/yyyy/louie
+#
+# With the UW IMAP server, fffff and ggggg would have appeared in the root
+# of this mail server, along with the Inbox.  aaaa, bbbb etc, would have
+# appeared in a folder called xxx from that root, and xxx was just a folder
+# not a mailbox for storing messages.
+# 
+# We also have the mailspool Inbox at:
+#
+#     /var/spool/mail/blah
+#
+# 
+# To convert these, as user blah, we give the first command:
+#
+#    mb2md xyz Inbox
+#
+# In this case, the first argument is irrelevant - "xyz" is ignored.
+#
+# The main Maildir directory will be created if it does not exist.
+# (This is true of any argument options, not just MBDIR = "Inbox".)
+#
+#    /home/blah/Maildir/
+#
+# It has the following subdirectories:
+#
+#    /home/blah/Maildir/tmp/
+#    /home/blah/Maildir/new/
+#    /home/blah/Maildir/cur/
+#
+# Then /var/spool/blah file is read, split into individual files and
+# written into /home/blah/Maildir/new/ .
+#
+# Now we give the second command:
+#
+#    mb2md  oldmail None
+#
+# This reads the fffff and ggggg Mbox mailboxes and creates:
+#
+#    /home/blah/Maildir/.fffff/
+#    /home/blah/Maildir/.ggggg/
+# 
+# Now we give the third command:
+#
+#    mb2md  oldmail xxx
+#
+# Then all the mailboxes:
+#
+#     /home/blah/oldmail/xxx/aaaa
+#     /home/blah/oldmail/xxx/bbbb
+#     /home/blah/oldmail/xxx/cccc
+#     /home/blah/oldmail/xxx/dddd
+#
+# are converted into Maildir format mailboxes in the following
+# directories:
+#
+#    /home/blah/Maildir/.xxx.aaaa/
+#    /home/blah/Maildir/.xxx.bbbb/
+#    /home/blah/Maildir/.xxx.cccc/
+#    /home/blah/Maildir/.xxx.aaaa/
+#
+# This suits Courier IMAP fine, and these will appear to the IMAP
+# client as four mailboxes in the folder "xxx" within the Inbox 
+# folder.  
+#
+# The final command:
+#
+#    mb2md  oldmail yyyy
+#
+# does the rest.  The result, from the IMAP client's point of view is:
+#
+#    Inbox -----------------
+#        |
+#        | fffff -----------
+#        | ggggg -----------
+#        |
+#        - xxx
+#        |   | aaaa --------
+#        |   | bbbb --------
+#        |   | cccc --------
+#        |   | dddd --------
+#        |   
+#        - yyyy
+#             | huey -------
+#             | duey -------
+#             | louie ------
+#
+# Note that although ~/Maildir/.xxx/ and ~/Maildir/.yyyy may appear 
+# as folders to the IMAP client the above commands to not generate
+# any Maildir folders of these names.  These are simply elements
+# of the names of other Maildir directories.
+#
+# With a separate run of this script, using the MBDIR = "None"
+# approach, it would be possible to create mailboxes which 
+# appear at the same location as far as the IMAP client is
+# concerned.  By having Mbox mailboxes in some directory:
+# ~/oldmail/nnn/ of the form:
+#
+#     /home/blah/oldmail/nn/xxxx
+#     /home/blah/oldmail/nn/yyyyy
+# 
+# then the command:
+#
+#   mb2md oldmail/nn None
+#
+# will create two new Maildirs:
+#
+#    /home/blah/Maildir/.xxx/
+#    /home/blah/Maildir/.yyyy/
+#
+# Then what used to be the xxx and yyyy folders now function as
+# mailboxes too.  Netscape 4.77 needed to be put to sleep and given ECT 
+# to recognise this - deleting the contents of (Win2k example):
+#  
+#    C:\Program Files\Netscape\Users\uu\ImapMail\aaa.bbb.ccc\
+#
+# where "uu" is the user and "aaa.bbb.ccc" is the IMAP server 
+#
+# I often find that deleting all this directory's contents, except
+# "rules.dat", forces Netscape back to reality after its IMAP innards
+# have become twisted.  Then maybe use File > Subscribe - but this 
+# seems incapable of subscribing to folders.
+#
+# For Outlook Express, select the mail server, then click the 
+# "IMAP Folders" button and use "Reset list".  In the "All" 
+# window, select the mailboxes you want to see in normal
+# usage.
+#
+#
+# This script does not recurse subdirectories or delete old mailboxes.
+#
+# Be sure not to be accessing the Mbox mailboxes while running this
+# script.  It does not attempt to lock them.  Likewise, don't run two
+# copies of this script either.
+#
+#
+# Trickier usage . . . 
+# ====================
+#
+# If you have a bunch of mailboxes in a directory ~/oldmail/doors/
+# and you want them to appear in folders such as:
+#
+# ~/Maildir/.music.bands.doors.Jim
+# ~/Maildir/.music.bands.doors.John
+#
+# etc. so they appear in an IMAP folder:
+#
+#    Inbox -----------------
+#        | music
+#              | bands
+#                    | doors
+#                          | Jim
+#                          | John
+#                          | Robbie
+#                          | Ray
+#
+# Then you should rename the source directory to:
+#
+#  ~/oldmail/music.bands.doors/ 
+# 
+# then you can use:
+#
+#   mb2md oldmail music.bands.doors
+#
+#------------------------------------------------------------------------------
+
+
+require 'stat.pl';
+ 
+					# Get user ID and check home dir
+					# exists.
+					 
+($name, $passwd, $uid, $gid, $quota, $comment, $gcos, $dir, $shell) = getpwuid($<);
+ 
+-e $dir or die("Fatal: home dir $dir doesn't exist.\n") ;
+
+&Stat($dir);
+
+if ($uid != $st_uid) {die("Fatal: $name is $uid, but $dir is owned by $st_uid.\n");}
+ 
+					# Dead wood, since we are not using 
+					# the current directory setting.
+					
+chdir($dir) or die "Fatal: unable to chdir to $dir.\n";
+
+
+					# Get arguments and determine source
+					# and target directories.
+					#
+					# Spit dummy if we don't have 2 or 3
+					# arguments.  Perl args start at 0.
+
+if  (   !($ARGV[1])
+     ||  ($ARGV[3])
+    ) 
+    {
+   	die("There should be 2 or 3 args.  Read the script for full doco!\n");
+    }
+
+					# Get the 2 or 3 arguments
+					#-------------------------
+
+					# eg. mbroot = oldmail
+					#
+					# Spit dummy if this directory does not
+					# exist, except for if MBDIR is "Inbox",
+					# in which case MBROOT is ignored.
+					# So get the MBDIR argument, before
+					# testing whether MBROOT exists.
+$mbroot = $ARGV[0];
+
+
+					# eg. mbdir = xxx
+					#
+					# Check the directory we want exists 
+					# after we have done the substitions
+					# for "None" and "Inbox".
+$mbdir  = $ARGV[1];
+
+					# Handle the third argument, if any.
+
+if  ($ARGV[2]) {$dest = $ARGV[2];}
+else           {$dest = "Maildir";}
+
+
+printf("MBROOT: $mbroot   MBDIR: $mbdir   DEST: $dest \n"); 
+
+
+					# Handle the arguments
+					#---------------------
+					#
+					# First, we set the $target string - 
+					# the mailspool directory where the 
+					# mails or mailboxes will be written.
+					# We make sure it exists, or we
+					# create it.
+					#
+					# Create the full path name of 
+					# the target directory, eg.:
+					# /home/blah/Maildir/ 
+
+$target = "$dir/$dest" ;
+					# A debug line - we report this later.
+# printf("Target directory is $target/\n");
+
+					# If the directory doesn't exist,
+					# make it.
+
+-d $target or mkdir $target,0700 or die("Fatal: Directory $target doesn't exist and can't be created.\n");
+ 
+-d "$target/tmp" or mkdir("$target/tmp",0700) or die("Fatal: Unable to make $target/tmp/ subdirectory.\n");
+-d "$target/new" or mkdir("$target/new",0700) or die("Fatal: Unable to make $target/new/ subdirectory.\n");
+-d "$target/cur" or mkdir("$target/cur",0700) or die("Fatal: Unable to make $target/cur/ subdirectory.\n");
+ 
+
+					# Except for the MBDIR == "Inbox" case
+					# check to see that the directory 
+					# specifed in MBDIR exists.  
+
+if  ($mbdir ne "Inbox") 
+{
+    -d "$dir/$mbroot" or die("Fatal: MBROOT directory $dir/$mbroot/ does not exist.\n");
+    -d "$dir/$mbroot" or die("Fatal: MBROOT $dir/$mbroot is not a directory.\n");
+}    
+
+					# Depending on the three possible
+					# modes of setting MBDIR, check that
+					# the input directories (or mailspool
+					# file) exists.
+					# 
+					# Also set the $tfile variable. This
+					# will form part of the name of 
+					# the mailbox we create (except for 
+					# when MBDIR is "Inbox". 
+					#
+					# Create the full path source 
+					# directory.  This is where we will 
+					# find the Mbox mailbox files.  
+					# We will add the trailing / when 
+					# we use it.
+					# 
+					# Normally it will be, for example,
+					#
+					#   /home/blah/oldmail/xxx
+					#
+					# but if mbdir == None, then it 
+					# will be:
+					#
+					#   /home/blah/oldmail
+					#
+					# and if mbdir == Inbox, then it
+					# will be:
+					#
+					#   /var/spool/mail
+
+
+if  ($mbdir eq "None")  
+{
+    $sourcedir = "$dir/$mbroot";
+					# No check needed - we have already
+					# checked this exists.
+					#
+					# $tfile will be "." because there
+					# is no directory component in the
+					# names of the new mailboxes - their
+					# names will come from the names
+					# of the Mbox files.   eg.
+					#
+					#   .fffff/
+    $tfile = ".";					
+}
+
+elsif  ($mbdir eq "Inbox") 
+{
+    $sourcedir = "/var/spool/mail";
+					
+					# Check the mailspool directory exists
+					# and then check this user's file 
+					# exists.
+
+    -e "$sourcedir" or die("Fatal: MBDIR = Inbox but directory $sourcedir/ does not exist.\n");
+    -d "$sourcedir" or die("Fatal: MBDIR = Inbox but $sourcedir is not a directory.\n");
+
+    -e "$sourcedir/$name" or die("Fatal: MBDIR = Inbox but $sourcedir/$name mailspool file does not exist.\n");
+    if (-d "$sourcedir/$name") {die("Fatal: MBDIR = Inbox but $sourcedir/$name is a directory.\n");}
+
+					# $tfile will be "", because we are
+					# putting it straight in 
+					#  /home/blah/Maildir/
+    $tfile = "";					
+}
+
+else 
+{
+    $sourcedir = "$dir/$mbroot/$mbdir";
+					
+					# This is the usual case, for instance
+					#  /home/blah/oldmail/xxx
+			    
+    -e "$sourcedir" or die("Fatal: MBDIR directory $sourcedir/ does not exist.\n");
+    -d "$sourcedir" or die("Fatal: MBDIR $sourcedir is not a directory.\n");
+
+					# $tfile will be ".$mbdir".  eg. 
+					#
+					#   .xxx.
+					#
+					# and we will add the rest of the
+					# mailbox name as convert each
+					# mailbox. eg.
+					#
+					#  .xxx.aaa/
+					
+    $tfile = ".$mbdir.";					
+
+
+}
+					# More debug lines.
+					
+printf("\nSource directory: $sourcedir/ \n");		
+
+if  ($mbdir eq "Inbox") 
+{
+    printf("Target mailbox:   $target/ \n\n\n");					
+}
+else
+{
+    printf("Target mailboxes: $target/$tfile??????? \n\n\n");					
+}
+
+
+
+					# Outer Loop
+					#-----------
+					#
+					# Now we have a loop which looks for 
+					# any file in the $sourcedir directory 
+					# and turns it into a Maildir mailbox. 
+					# We assume all files are Mbox 
+					# mailboxes.
+					#
+					# In one case, when $mbdir is "Inbox" 
+					# then the loop must work only once, 
+					# to find the user's mailspool file.
+					#
+					# readir() gets file/directory names 
+					# from a directory previously opened 
+					# with opendir().  We should close it
+					# afterwards too.
+					#
+					# SDIR is a file handle.
+					#
+					# We ignore what we find if it is a 
+					# directory.  There will be 
+					# directories, such as "." and ".."
+					# at least. 
+					#
+					# This test must be done inside the
+					# while loop, not part of the 
+					# condition of the loop.
+					#
+					# I use -d to test for it being 
+					# a directory.
+					#
+					# All these -d and -T thingos are
+					# in /func/X.html at perldoc.com.
+
+
+opendir(SDIR, $sourcedir) or die("Fatal: Cannot open source directory $sourcedir/ \n");					
+
+					# Count the number of mailboxes, or 
+					# at least files, we found.
+
+$mailboxcount = 0;
+
+
+
+
+while ($sfile = readdir(SDIR))
+{
+					# Test firstly that this is a file,
+					# and secondly, if $mbdir is "Inbox"
+					# that it is the user's mailspool
+					# file. 
+    if (    (!-d "$sourcedir/$sfile")
+         && (    !($mbdir eq "Inbox")
+	      ||  ($sfile eq $name)
+	    )
+       )
+    {
+	printf("Found              $sourcedir/$sfile\n");
+	$mailboxcount++;
+
+					# We have located the file to convert.
+					#
+					# In most cases, we need to create
+					# a new Maildir format mailbox, with
+					# its directory and three 
+					# subdirectories and then chdir to 
+					# the mailbox directory before 
+					# entering the conversion loop.
+					#
+					# But if MBDIR is "Inbox" then
+					# we don't need to make any new
+					# mailboxes, since we are going
+					# to write, for instance, into
+					# 
+					#   /home/blah/Maildir/new/
+					#
+					# If MBDIR is "None" then we will
+					# convert into, for instance:
+					#
+					#  /home/blah/Maildir/.fffff/new/
+					#  /home/blah/Maildir/.ggggg/new/
+					#
+					# Any other value for mdir, such as
+					# "xxx" will make the destination
+					# $target/.$mbroot/$tfile$mbdir/new/
+					#
+					#  /home/blah/Maildir/.xxx.aaaa/new/ 
+					#  /home/blah/Maildir/.xxx.bbbb/new/ 
+
+	if ($mbdir eq "Inbox")
+	{
+					# No mailbox to create, but set
+					# $targetmb appropriately.
+	    $targetmb = "$target" ;					
+	    printf("Target Maildir is  $targetmb \n\n") ;
+
+	}
+	else
+	{
+					# Set the target mailbox and create it.
+					
+	    $targetmb = "$target/$tfile$sfile" ;					
+	    printf("Target Maildir is  $targetmb \n") ;
+
+	    -d $targetmb or mkdir $targetmb,0700 or die("Fatal: Directory $targetmb doesn't exist and can't be created.\n");
+ 
+	    -d "$targetmb/tmp" or mkdir("$targetmb/tmp",0700) or die("Fatal: Unable to make $targetmb/tmp/ subdirectory.\n");
+	    -d "$targetmb/new" or mkdir("$targetmb/new",0700) or die("Fatal: Unable to make $targetmb/new/ subdirectory.\n");
+	    -d "$targetmb/cur" or mkdir("$targetmb/cur",0700) or die("Fatal: Unable to make $targetmb/cur/ subdirectory.\n");
+	}					
+					
+					# Change to the target mailbox directory.
+	chdir "$targetmb" ;					
+
+
+					
+					# Inner loop
+					#-----------
+					#
+					# Converts a Mbox to multiple files 
+					# in a Maildir.
+					# This is adapted from mbox2maildir.
+					#
+					# Open the Mbox mailbox file.
+					
+
+	if (open(MBOX, "$sourcedir/$sfile"))
+	{
+	    printf("Converting mailbox $sourcedir/$sfile . . .  \n");
+	}
+	else 
+	{
+	    die("Fatal: unable to open input mailbox file: $sourcedir/$sfile ! \n");
+	}	    
+					# This loop scans the input mailbox for
+					# a line starting with "From ".  The 
+					# "^" before it is pattern-matching 
+					# lingo for it being at the start of a
+					# line.
+					#
+					# Each email in Mbox mailbox starts 
+					# with such a line, which is why any 
+					# such line in the body of the email 
+					# has to have a ">" put in front of it.
+					#
+					# This is not required in a Maildir
+					# mailbox, and some majik below
+					# finds any such quoted "From"s and
+					# gets rid of the quote.
+					#
+					# Each email is put in a file 
+					# in the new/ subdirectory with a
+					# name of the form:
+					#
+					#    nnnnnnnnn.mbox
+					#
+					# where nnnnnnnnn is the Unix time 
+					# since 1970, incremented by 1
+					# for every email.
+					# This is sort-of  compliant with
+					# the Maildir naming conventions
+					# specified at:
+					# 
+					# http://www.qmail.org/man/man5/maildir.html
+					#
+					# There are various IMAP flags which
+					# could be added, and this approach
+					# does not involve the process ID or
+					# the host, but it is probably good
+					# enough.
+					# 
+					# When the IMAP server looks at this
+					# mailbox, it will move the files to
+					# the cur/ directory and change their
+					# names as it pleases.  In the case
+					# of Courier IMAP, the names will
+					# become like:
+					#
+					#   995096541.25351.mbox:2,S
+					#
+					# with 25351 being Courier IMAP's 
+					# process ID.  The :2, is the start
+					# of the flags, and the "S" means
+					# that this one has been seen by
+					# the user.
+					#
+					# This contrasts with a message
+					# created by Courier IMAP, say with 
+					# a message copy, which is like:
+					#
+					#   995096541.25351.zair,S=14285:2,S
+					#
+					# where ",S=14285" is the size of the
+					# message in bytes. 
+					#
+					# Courier Maildrop's names are similar
+					# but lack the ":2,xxx" flags . . . 
+					# except for my modified Maildrop
+					# which can deliver them with a
+					# ":2,T" - flagged for deletion.
+					#
+					# I have extened the logic of the
+					# per-message inner loop to stop 
+					# saving a file for a message with:
+					#
+					# Subject: DON'T DELETE THIS MESSAGE -- FOLDER INTERNAL DATA
+					#
+					# This is the dummy message, always
+					# at the start of an Mbox format 
+					# mailbox file - and is put there
+					# by UW IMAPD.  Since quite a few
+					# people will use this for 
+					# converting from a UW system, 
+					# I figure it is worth it.
+					#
+					# As I am a bit sus about when each 
+					# message file is closed, I will have
+					# a bit of a kludge to remember the
+					# first file name we write, if
+					# we determine it was a dummy so 
+					# we can delete it at the end of 
+					# converting the 1 or more messages
+					# in the mailbox.
+
+	$deletedummy = "";
+
+	$messagecount = 0;					
+
+	$unique = time;
+
+	while(<MBOX>) 
+	{
+	    if (/^From /) 
+	    {
+
+		$messagefn = sprintf("new/%d.$$.mbox", $unique);
+		open(OUT, ">$messagefn") or die("Fatal: unable to create new message");
+		$unique++;
+
+					# Count the messages. 
+		$messagecount++;
+
+		next;
+	    }
+
+					# Only for the first message, 
+					# check to see if it is a dummy.
+					#
+					# Add search terms as required.  
+					# The last 2 lines are for rent.
+					
+	    if (    ($messagecount == 1)
+	         && (     (m/^Subject: DON'T DELETE THIS MESSAGE -- FOLDER INTERNAL DATA/)
+		       || (m/^Subject: Bulwinkle next Pope/)
+		       || (m/^Subject: Buy US War Bonds!/)
+		    )
+	       )
+	    {
+		$deletedummy = "$messagefn";
+	    }
+
+					# Pattern matching Perl majik to 
+					# get rid of a Mbox quoted From. 
+	    s/^>From /From /;
+
+	    print OUT or die("Fatal: unable to write to new message");
+
+					# So where do the bytes get written
+					# to the file??
+	}
+
+
+					# After all the messages have been
+					# converted, check to see if the 
+					# first one was a dummy.
+					# if so, delete it and make
+					# the message count one less.
+	if ($deletedummy ne "")
+	{
+	    printf("Dummy mail system first message detected and not saved.\n");
+	    unlink $deletedummy;
+	    
+	    $messagecount--;	
+			
+	}
+	
+	close(MBOX);
+	close(OUT);
+	
+	print("                                                              $messagecount messages.\n\n");
+    }
+}
+
+closedir(SDIR);					
+
+#die("So far so good.\n\n");
+
+printf("$mailboxcount files processed.\n");
+
+exit 0;
+
