@@ -1,6 +1,0 @@
-#!/bin/sh
-set -x
-#echo "$1" > /tmp/url
-#wget "$1" --output-document=/tmp/stream.m3u
-cp -v $1 $1.m3u
-xmms $1.m3u &

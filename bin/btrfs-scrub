@@ -1,9 +1,0 @@
-#!/bin/sh
-#awk '/btrfs/ {print $2}' /proc/mounts | while read dn; do
-#  logger "Starting scrub of $dn"
-#  echo $dn
-#  ionice -c3 nice btrfs scrub start -B $dn
-#  logger "Ended scrub of $dn"
-#done
-# turns out that this command will scrub all filesystems on the device 
-ionice -c3 nice /bin/btrfs scrub start -c3 -n7 -d -B /

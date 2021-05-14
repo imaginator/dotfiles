@@ -1,3 +1,0 @@
-#!/bin/sh
-date >> /tmp/ipaddr
-ip -6 addr show dev br0 scope global | grep inet6 >> /tmp/ipaddr
