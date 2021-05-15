@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # ~/.xsessionrc is executed on Debian (and derivatives such as Ubuntu, Linux Mint, etc.)
 # by the X startup scripts on a GUI login, for all session types and (I think) from 
 # all display managers. It's also executed from startx if the user doesn't have a .xinitrc, 
@@ -12,16 +14,6 @@
 # 
 #     ~/.xsession is the way to go when using a login manager (like gdm, kdm, xdm).
 #     ~/.xinitrc will be used when you use startx
-#
-# Disable DPMS turning off the screen
-#xset -dpms
-#xset s off
-
-# Disable bell
-xset -b
-
-# Enable zapping (C-A-<Bksp> kills X)
-setxkbmap -option terminate:ctrl_alt_bksp
 
 # Enforce correct locales from the beginning:
 # LC_ALL is unset since it overwrites everything
@@ -34,8 +26,36 @@ export LC_MESSAGES=C
 export LC_TIME=en_DK.UTF-8
 export TZ=Europe/Berlin
 
-# Use XToolkit in java applications
-export AWT_TOOLKIT=XToolkit
+# Xresources
+xrdb -merge ~/.Xresources
+
+# keyboard setup
+xmodmap ~/.Xmodmap
+
+# Font
+xset +fp ~/.local/share/fonts/
+xset fp rehash
+
+# Increase key repeat rate
+xset r rate 300 50 &
+
+# Turn off system beep
+xset b off &
+xset b 0 0 0 &
+
+# Make sure cursor is not an X when hovering over root window
+xsetroot -cursor_name left_ptr &
+
+# Startup
+picom &
+unclutter --timeout 1 &
+redshift -l 52.50:13.42 &
+
+# Send notifications regarding battery usage
+battery-notify &
+
+# Enable zapping (C-A-<Bksp> kills X)
+setxkbmap -option terminate:ctrl_alt_bksp
 
 # Set background color
 xsetroot -solid "#333333"
@@ -43,6 +63,5 @@ xsetroot -solid "#333333"
 # Enable core dumps in case something goes wrong
 ulimit -c unlimited
 
-# Start i3 and log to ~/.i3/logfile
-#echo "Starting at $(date)" >> ~/.i3/logfile
-#exec /usr/bin/i3 -V -d all >> ~/.i3/logfile
+# Start window manager
+exec /usr/bin/i3 -V -d all >> /tmp/i3.log
