@@ -126,7 +126,7 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 ## colour of border, background, text, indicator, and child_border
-https://en.wikipedia.org/wiki/Solarized_(color_scheme) 
+# https://en.wikipedia.org/wiki/Solarized_(color_scheme) 
 client.focused              #93a1a1 #93a1a1  #eee8d5  #bf616a #d8dee8
 client.focused_inactive     #2f343f #2f343f #eee8d5  #2f343f #2f343f
 client.unfocused            #002b36 #002b36 #eee8d5 #002b36  #002b36 
@@ -159,3 +159,6 @@ exec_always --no-startup-id flashfocus
 bindsym $mod+l exec i3lock
 
 bindsym $mod+n exec --no-startup-id flash_window
+
+
+workspace_auto_back_and_forth yes

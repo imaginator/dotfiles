@@ -1,9 +1,10 @@
 {
-    "window.zoomLevel": 1,
     "git.enableSmartCommit": true,
     "git.autofetch": true,
     "openhab.connection.basicAuth.username": "simon",
     "openhab.connection.host": "10.7.11.1",
     "openhab.connection.port": 8080,
-    "openhab.connection.basicAuth.password": "sisisi"
+    "openhab.connection.basicAuth.password": "sisisi",
+    "files.autoSave": "onFocusChange",
+    "window.zoomLevel": 1
 }
