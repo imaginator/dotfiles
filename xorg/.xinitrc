@@ -50,6 +50,7 @@ xsetroot -cursor_name left_ptr &
 picom &
 unclutter --timeout 1 &
 redshift -l 52.50:13.42 &
+dunst
 
 # Send notifications regarding battery usage
 battery-notify &
