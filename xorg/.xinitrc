@@ -34,7 +34,6 @@ xmodmap ~/.Xmodmap
 
 # Font
 xset +fp ~/.local/share/fonts/
-xset fp rehash
 
 # Increase key repeat rate
 xset r rate 300 50 &
@@ -50,7 +49,7 @@ xsetroot -cursor_name left_ptr &
 picom &
 unclutter --timeout 1 &
 redshift -l 52.50:13.42 &
-dunst
+dunst &
 
 # Send notifications regarding battery usage
 battery-notify &
@@ -65,4 +64,4 @@ xsetroot -solid "#333333"
 ulimit -c unlimited
 
 # Start window manager
-exec /usr/bin/i3 -V -d all >> /tmp/i3.log
+exec /usr/bin/i3 > /tmp/i3.log

@@ -1,0 +1,14 @@
+#!/bin/sh
+# run-xsecurelock - run xsecurelock(1) with right config
+
+if [ "$1" = lock ]; then
+    ssh-add -D
+    XSECURELOCK_BLANK_TIMEOUT=900 \
+    XSECURELOCK_PASSWORD_PROMPT=time_hex \
+    XSECURELOCK_SAVER=saver_xscreensaver \
+    XSECURELOCK_SAVER_RESET_ON_AUTH_CLOSE=1 \
+    XSECURELOCK_SHOW_DATETIME=1 \
+        exec xsecurelock
+fi
+
+xidle -no -program "$HOME/bin/run-xsecurelock lock" -timeout 600
