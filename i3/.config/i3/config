@@ -152,13 +152,14 @@ bindsym XF86AudioPrev exec playerctl previous
 # startup 
 exec --no-startup-id nm-applet
 exec --no-startup-id pulseaudio
+exec --no-startup-id xset s 300 5
+exec --no-startup-id xss-lock -n /usr/libexec/xsecurelock/dimmer -l -- xsecurelock
 exec --no-startup-id blueman-applet
-exec --no-startup-id xautolock -time 10 -locker "i3lock"
+#exec --no-startup-id xautolock -time 5 -locker 'blurlock -n' -notify 15 -notifier "notify-send 'Screen will lock in 15 s'" -detectsleep -killtime 60 -killer "systemctl suspend"
+#exec --no-startup-id xautolock -time 10 -locker "i3lock"
+#exec --no-startup-id xautolock -time 15 -locker "systemctl suspend"
 exec_always --no-startup-id ~/.config/polybar/colorblocks/launch.sh
 exec_always --no-startup-id flashfocus
 bindsym $mod+l exec i3lock
 
 bindsym $mod+n exec --no-startup-id flash_window
-
-
-workspace_auto_back_and_forth yes

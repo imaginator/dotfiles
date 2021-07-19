@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =3
+let g:netrw_dirhistcnt =4
+let g:netrw_dirhist_4='/home/simon/.config'
 let g:netrw_dirhist_3='/home/simon/dotfiles/.config/autorandr'
 let g:netrw_dirhist_2='/home/simon/.local/share/digikam'
 let g:netrw_dirhist_1='/home/simon/.config/pulse'

@@ -6,5 +6,28 @@
     "openhab.connection.port": 8080,
     "openhab.connection.basicAuth.password": "sisisi",
     "files.autoSave": "onFocusChange",
-    "window.zoomLevel": 1
+    "explorer.confirmDelete": false,
+    "[openhab]": {
+        "editor.defaultFormatter": "max-beckenbauer.oh-alignment-tool"
+    },
+    "oh-alignment-tool.enableBetaFeatures": true,
+    "workbench.colorTheme": "Solarized Dark",
+    "window.zoomLevel": 1,
+    "editor.renderIndentGuides": false,
+    "editor.highlightActiveIndentGuide": false,
+    "workbench.colorCustomizations": {
+        "editor.lineHighlightBackground": "#1073cf2d",
+        "editor.lineHighlightBorder": "#9fced11f"
+    },
+    "editor.wordWrap": "off",
+    "diffEditor.wordWrap": "off",
+    "[markdown]": {
+        "editor.wordWrap": "off",
+        "editor.quickSuggestions": false
+    },
+    "blockman.n23AnalyzeSquareBrackets": true,
+    "blockman.n24AnalyzeRoundBrackets": true,
+    "blockman.n03MaxDepth": 20,
+    "blockman.n04ColorComboPreset": "Lobelia (Solid colors)",
+    "blockman.n05CustomColorOfDepth0": "fff"
 }
