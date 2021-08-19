@@ -2,6 +2,6 @@
 # give things time to settled down
 logger "invoking $(realpath -s $0)"
 
-sleep 4 # previously 3 wasn't long enough. 
+sleep 5 # previously 3 wasn't long enough. 
 
 logger "finished $(realpath -s $0)"
