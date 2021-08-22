@@ -11,15 +11,14 @@ font pango:DejaVu Sans Mono 8
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
-# start a terminal
-bindsym $mod+Return exec       gnome-terminal --title furrow.imagilan       -- tmux new-session -s simon -A -D
-bindsym $mod+Shift+Return exec gnome-terminal --title bunker.imaginator.com --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -Y -t tmux new-session -s simon -A -D
-
-# kill focused window
-bindsym $mod+Shift+q kill
-
-# start rofi (a program launcher)
+# key launches
+bindsym $mod+Return         exec gnome-terminal --title furrow.imagilan                                                                             -- tmux new-session -s simon -A -D
+bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -Y   -t tmux new-session -s simon -A -D
+bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 simon@ln.imagilan  -Y       -t tmux new-session -s simon -A -D
+bindsym $mod+Shift+w exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 bindsym $mod+d exec rofi -no-config -no-lazy-grab -show drun -modi drun -theme ~/.config/polybar/colorblocks/scripts/rofi/launcher.rasi
+
+bindsym $mod+Shift+q kill
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
@@ -60,6 +59,15 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
+# workspace default monitors
+workspace $WS1 output DP1
+workspace $WS2 output eDP1
+workspace $WS3 output DP1
+workspace $WS4 output eDP1
+workspace $WS5 output DP1
+workspace $WS6 output eDP1
+workspace $WS9 output DP1
+
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1"
@@ -71,7 +79,6 @@ set $ws6 "6"
 set $ws7 "7"
 set $ws8 "8"
 set $ws9 "9"
-set $ws10 "10"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -83,7 +90,7 @@ bindsym $mod+6 workspace $ws6
 bindsym $mod+7 workspace $ws7
 bindsym $mod+8 workspace $ws8
 bindsym $mod+9 workspace $ws9
-bindsym $mod+0 workspace $ws10
+
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $ws1
@@ -95,7 +102,6 @@ bindsym $mod+Shift+6 move container to workspace $ws6
 bindsym $mod+Shift+7 move container to workspace $ws7
 bindsym $mod+Shift+8 move container to workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9
-bindsym $mod+Shift+0 move container to workspace $ws10
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -163,3 +169,6 @@ exec_always --no-startup-id flashfocus
 bindsym $mod+l exec i3lock
 
 bindsym $mod+n exec --no-startup-id flash_window
+
+
+exec --no-startup-id i3-msg workspace 2
