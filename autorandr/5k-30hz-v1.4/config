@@ -8,12 +8,12 @@ output VIRTUAL1
 off
 output DP1
 crtc 1
-mode 5120x2160_custom_40_xorg
+mode 5120x2160
 pos 0x0
-primary
-rate 40.00
+rate 30.00
 output eDP1
 crtc 0
 mode 2560x1440
-pos 5120x1200
+pos 5120x1221
+primary
 rate 60.01
