@@ -38,7 +38,7 @@ ZSH_TMUX_AUTOQUIT="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git debian brew docker tmux keychain gpg-agent)
+plugins=(adb command-not-found git debian brew docker tmux)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -46,3 +46,5 @@ source $ZSH/oh-my-zsh.sh
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export EDITOR=/usr/bin/vim
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
