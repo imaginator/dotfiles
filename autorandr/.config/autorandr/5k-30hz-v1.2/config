@@ -8,9 +8,9 @@ output VIRTUAL1
 off
 output DP1
 crtc 1
-mode 5120x2160
+mode 5120x2160_30.00
 pos 0x0
-rate 30.00
+rate 29.98
 output eDP1
 crtc 0
 mode 2560x1440
