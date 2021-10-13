@@ -18,17 +18,19 @@ include /etc/sway/config-vars.d/*
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg #000000 solid_color
+#R/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
 #   output HDMI-A-1 resolution 1920x1080 position 1920,0
-output DP-1 position 0,0            resolution 2560x2160 scale 1
-output DP-2 position 2560,0         resolution 2560x2160 scale 1
-output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
+#output DP-1 position 0,0            resolution 2560x2160 scale 1
+#output DP-2 position 2560,0         resolution 2560x2160 scale 1
+#output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
+output eDP-1    resolution 2560x1440 scale 1
 #output eDP-1 scale 1
-#output DP-1 disable
-#output DP-2 disable 
+output DP-1 disable
+output DP-2 disable 
 
 
 #
@@ -41,8 +43,9 @@ output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
 exec swayidle -w \
       timeout 600 'swaylock -f -c 000000' \
       timeout 300 'swaymsg "output * dpms off"' \
+      timeout 400 'systemctl hybrid-sleep' \
            resume 'swaymsg "output * dpms on"' \
-      before-sleep 'swaylock -f -c 000000'
+     before-sleep 'swaylock -f -c 000000'
 
 bindsym $mod+Escape exec swaylock -f -c 000000
 #
@@ -204,10 +207,10 @@ mode "resize" {
     # right will grow the containers width
     # up will shrink the containers height
     # down will grow the containers height
-    bindsym Left resize shrink width 10px
-    bindsym Down resize grow height 10px
-    bindsym Up resize shrink height 10px
-    bindsym Right resize grow width 10px
+    bindsym Left resize shrink width 20px
+    bindsym Down resize grow height 20px
+    bindsym Up resize shrink height 20px
+    bindsym Right resize grow width 20px
 
     # Return to default mode
     bindsym Return mode "default"
@@ -239,6 +242,14 @@ bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket"
 bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 simon@ln.imagilan      -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+w exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
+
+# screen toggle
+bindsym $mod+bracketleft  output DP-1 pos 0 0 mode 2560x2160 scale 1 enable, output DP-2 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-1, workspace 2, move workspace to output DP-2
+bindsym $mod+bracketright output DP-2 pos 0 0 mode 2560x2160 scale 1 enable, output DP-1 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-2, workspace 2, move workspace to output DP-1
+
+# audio toggle
+bindsym $mod+Shift+bracketleft  exec pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo+input:analog-stereo        
+bindsym $mod+Shift+bracketright exec pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo-extra1+input:analog-stereo 
 
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume @DEFAULT_SINK@ +5% #increase sound volume

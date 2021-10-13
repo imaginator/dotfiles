@@ -65,4 +65,4 @@ xsetroot -solid "#333333"
 ulimit -c unlimited
 
 # Start window manager
-exec /usr/bin/i3 > /tmp/i3.log
+exec /usr/bin/sway > /tmp/sway.log

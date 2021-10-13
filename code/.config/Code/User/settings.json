@@ -12,7 +12,6 @@
     },
     "oh-alignment-tool.enableBetaFeatures": true,
     "workbench.colorTheme": "Solarized Dark",
-    "window.zoomLevel": 1,
     "editor.renderIndentGuides": false,
     "editor.highlightActiveIndentGuide": false,
     "workbench.colorCustomizations": {
@@ -29,5 +28,14 @@
     "blockman.n24AnalyzeRoundBrackets": true,
     "blockman.n03MaxDepth": 20,
     "blockman.n04ColorComboPreset": "Lobelia (Solid colors)",
-    "blockman.n05CustomColorOfDepth0": "fff"
+    "blockman.n05CustomColorOfDepth0": "fff",
+    "yaml.customTags": [
+        "!encrypted/pkcs1-oaep scalar",
+        "!vault scalar"
+    ],
+    "redhat.telemetry.enabled": false,
+    "ansible.validate.executablePath": "/usr/bin/ansible-lint",
+    "editor.inlayHints.enabled": false,
+    "window.zoomLevel": 1,
+    "diffEditor.ignoreTrimWhitespace": false
 }
