@@ -240,7 +240,7 @@ bar {
 
 bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title furrow.imagilan                                                                             --   tmux new-session -s simon -A -D
 bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
-bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 simon@ln.imagilan      -AXY   -t tmux new-session -s simon -A -D
+bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 ubuntu@ln.imagilan     -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+w exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 
 # screen toggle
