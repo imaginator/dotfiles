@@ -37,5 +37,6 @@
     "ansible.validate.executablePath": "/usr/bin/ansible-lint",
     "editor.inlayHints.enabled": false,
     "window.zoomLevel": 1,
-    "diffEditor.ignoreTrimWhitespace": false
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.guides.indentation": false
 }

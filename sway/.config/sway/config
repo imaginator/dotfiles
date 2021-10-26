@@ -29,8 +29,8 @@ output * bg #000000 solid_color
 #output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
 output eDP-1    resolution 2560x1440 scale 1
 #output eDP-1 scale 1
-output DP-1 disable
-output DP-2 disable 
+#output DP-1 disable
+#output DP-2 disable 
 
 
 #
@@ -43,10 +43,10 @@ output DP-2 disable
 exec swayidle -w \
       timeout 600 'swaylock -f -c 000000' \
       timeout 300 'swaymsg "output * dpms off"' \
-      timeout 400 'systemctl hybrid-sleep' \
            resume 'swaymsg "output * dpms on"' \
      before-sleep 'swaylock -f -c 000000'
 
+      #timeout 400 'systemctl hybrid-sleep' \
 bindsym $mod+Escape exec swaylock -f -c 000000
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
@@ -220,28 +220,16 @@ bindsym $mod+r mode "resize"
 
 #
 # Status Bar:
-#
-# Read `man 5 sway-bar` for more information about this section.
 bar {
-    position top
-
-    # When the status_command prints a new line to stdout, swaybar updates.
-    # The default just shows the current date and time.
-    status_command while date +'%Y-%m-%d %l:%M:%S %p'; do sleep 1; done
-
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
+    swaybar_command waybar
     }
-}
 
 # key launches
 
 bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title furrow.imagilan                                                                             --   tmux new-session -s simon -A -D
 bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 ubuntu@ln.imagilan     -AXY   -t tmux new-session -s simon -A -D
-bindsym $mod+Shift+w exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
+bindsym $mod+Shift+w        exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 
 # screen toggle
 bindsym $mod+bracketleft  output DP-1 pos 0 0 mode 2560x2160 scale 1 enable, output DP-2 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-1, workspace 2, move workspace to output DP-2
@@ -260,8 +248,42 @@ bindsym XF86AudioMute exec --no-startup-id pactl -- set-sink-mute @DEFAULT_SINK@
 bindsym XF86MonBrightnessUp   exec light -A 6 
 bindsym XF86MonBrightnessDown exec light -U 6 
 
-# display configuration
-#exec kanshi
-exec wl-paste -t text --watch clipman store
+# Rice
+# disables window titles
+default_border none
+#default_border pixel 2 
+#gaps inner 5
+#gaps outer 2
+#smart_gaps on
+
+# Window borders 
+
+#hide_edge_borders smart 
+
+# Set colors
+set $bg #2E3440
+set $fg #eff1f5
+set $br #D8DEE9
+set $ia #232425
+
+
+# class                 border  backgr. text    indicator child_border
+client.focused          $br     $br     $fg     $bg       $br
+client.focused_inactive $bg     $bg     $fg     $bg       $bg
+client.unfocused        $bg     $bg     $fg     $bg       $bg
+#client.urgent          $br     $br     $fg     $bg       $br #currently not implemented
+#client.placeholder     $br     $br     $fg     $bg       $br #currently not implemented
+client.background $bg
+
+
+
+# Notifications
+bindsym Control+Space exec makoctl dismiss
+bindsym Control+Shift+Space exec makoctl dismiss --all
 
 include /etc/sway/config.d/*
+
+# Autostart 
+exec wl-paste -t text --watch clipman store
+exec --no-startup-id mako
+exec --no-startup-id redshift -c ~/.config/redshift/config
