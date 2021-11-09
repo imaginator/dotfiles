@@ -158,7 +158,7 @@
     font-weight: bold; /* Somewhy the bar-wide setting is ignored*/
     padding: 0;
     /*color: #999;*/
-    opacity: 0.3;
+    opacity: 1;
     background: none;
     font-size: 1em;
 }

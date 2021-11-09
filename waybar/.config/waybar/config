@@ -1,24 +1,5 @@
 [
     {
-        "name": "plainbar",
-        "layer": "top",
-        "output": [
-            "DP-1",
-            "DP-2"
-        ],
-        "modules-left": [
-            "sway/workspaces",
-            "sway/mode",
-            "custom/media"
-        ],
-        "modules-center": [
-            "sway/window"
-        ],
-        "modules-right": [
-            "clock"
-        ]
-    },
-    {
         "name": "fancybar",
         "layer": "top",
         "output": "eDP-1",
@@ -38,12 +19,19 @@
             "temperature",
             "battery",
             "clock",
+            "custom/clock",
             "tray"
         ],
         "sway/window": {
             "format": "{}",
             "max-length": 50,
-            "tooltip": false
+            "tooltip": false,
+            "all-outputs": true
+        },
+        "sway/workspaces": {
+            "format": "{}",
+            "current-only": false,
+            "all-outputs": true
         },
         "pulseaudio": {
             "scroll-step": 1,
@@ -74,6 +62,15 @@
             "format-disconnected": "",
             "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
             "on-click": "nm-connection-editor"
+        },
+        "clock": {
+            "interval": 60,
+            "format": "{:%H:%M  %d %b}",
+            "max-length": 25
+        },
+        "custom/clock": {
+            "exec": "date +'%H:%M    %d %b'",
+            "interval": 10
         }
     }
 ]
