@@ -24,14 +24,13 @@ output * bg #000000 solid_color
 # Example configuration:
 #
 #   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#output DP-1 position 0,0            resolution 2560x2160 scale 1
-#output DP-2 position 2560,0         resolution 2560x2160 scale 1
+#output DP-1 position 0,0            resolution 5120x2160@29.995001Hz scale 1
+#output DP-2 position 2560,0         resolution 5120x2160@29.995001Hz scale 1
 #output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
 output eDP-1    resolution 2560x1440 scale 1
 #output eDP-1 scale 1
-#output DP-1 disable
-#output DP-2 disable 
-
+output DP-1 disable
+output DP-2 disable 
 
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
@@ -228,12 +227,13 @@ bar {
 
 bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title furrow.imagilan                                                                             --   tmux new-session -s simon -A -D
 bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
-bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 ubuntu@ln.imagilan     -AXY   -t tmux new-session -s simon -A -D
+bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 simon@ln.imagilan     -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+w        exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 
 # screen toggle
-bindsym $mod+bracketleft  output DP-1 pos 0 0 mode 2560x2160 scale 1 enable, output DP-2 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-1, workspace 2, move workspace to output DP-2
-bindsym $mod+bracketright output DP-2 pos 0 0 mode 2560x2160 scale 1 enable, output DP-1 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-2, workspace 2, move workspace to output DP-1
+#bindsym $mod+bracketleft  output DP-1 pos 0 0 mode 2560x2160 scale 1 enable, output DP-2 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-1, workspace 2, move workspace to output DP-2
+#bindsym $mod+bracketright output DP-2 pos 0 0 mode 2560x2160 scale 1 enable, output DP-1 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-2, workspace 2, move workspace to output DP-1
+bindsym $mod+bracketright  exec ~/.config/sway/switch_monitors.sh
 
 # audio toggle
 bindsym $mod+Shift+bracketleft  exec pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo+input:analog-stereo        
@@ -250,8 +250,8 @@ bindsym XF86MonBrightnessDown exec light -U 6
 
 # Rice
 # disables window titles
-default_border none
-#default_border pixel 2 
+#default_border none
+default_border pixel 2 
 #gaps inner 5
 #gaps outer 2
 #smart_gaps on
@@ -275,9 +275,8 @@ client.unfocused        $bg     $bg     $fg     $bg       $bg
 #client.placeholder     $br     $br     $fg     $bg       $br #currently not implemented
 client.background $bg
 
-
-
 # Notifications
+exec mako
 bindsym Control+Space exec makoctl dismiss
 bindsym Control+Shift+Space exec makoctl dismiss --all
 
