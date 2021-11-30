@@ -1,4 +1,6 @@
-# Default config for sway
+# vim:ft=i3config 
+
+# # Default config for sway
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
@@ -35,17 +37,6 @@ output DP-2 disable
 #
 # You can get the names of your outputs by running: swaymsg -t get_outputs
 
-### Idle configuration
-#
-# Example configuration:
-#
-exec swayidle -w \
-      timeout 600 'swaylock -f -c 000000' \
-      timeout 300 'swaymsg "output * dpms off"' \
-           resume 'swaymsg "output * dpms on"' \
-     before-sleep 'swaylock -f -c 000000'
-
-      #timeout 400 'systemctl hybrid-sleep' \
 bindsym $mod+Escape exec swaylock -f -c 000000
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
@@ -217,22 +208,15 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-#
-# Status Bar:
-bar {
-    swaybar_command waybar
-    }
-
 # key launches
 
-bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title furrow.imagilan                                                                             --   tmux new-session -s simon -A -D
-bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
-bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" gnome-terminal --title ln.imagilan            --window-with-profile=ln     -- ssh -p22 simon@ln.imagilan     -AXY   -t tmux new-session -s simon -A -D
+bindsym $mod+Return         exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" alacritty --title furrow.imagilan        --command   tmux new-session -s simon -A -D
+bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" alacritty --title bunker.imaginator.com  ---command ssh -p22 simon@bunker.imagilan  -AXY   -t tmux new-session -s simon -A -D
+bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" alacritty --title ln.imagilan            ---command ssh -p22 simon@ln.imagilan      -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+w        exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 
 # screen toggle
-#bindsym $mod+bracketleft  output DP-1 pos 0 0 mode 2560x2160 scale 1 enable, output DP-2 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-1, workspace 2, move workspace to output DP-2
-#bindsym $mod+bracketright output DP-2 pos 0 0 mode 2560x2160 scale 1 enable, output DP-1 pos 2560 0 mode 2560x2160 scale 1 enable, output eDP-1 position 5120 1222 resolution 2560x1440 scale 1, workspace 1, move workspace to output DP-2, workspace 2, move workspace to output DP-1
+bindsym $mod+bracketleft  output DP-1 toggle, output DP-2 toggle
 bindsym $mod+bracketright  exec ~/.config/sway/switch_monitors.sh
 
 # audio toggle
@@ -276,13 +260,40 @@ client.unfocused        $bg     $bg     $fg     $bg       $bg
 client.background $bg
 
 # Notifications
-exec mako
 bindsym Control+Space exec makoctl dismiss
 bindsym Control+Shift+Space exec makoctl dismiss --all
 
-include /etc/sway/config.d/*
+set $laptop eDP-1
+bindswitch --reload --locked lid:on output $laptop disable
+bindswitch --reload --locked lid:off output $laptop enable
 
 # Autostart 
-exec wl-paste -t text --watch clipman store
-exec --no-startup-id mako
+exec  wl-paste -t text --watch clipman store
 exec --no-startup-id redshift -c ~/.config/redshift/config
+exec --no-startup-id nm-applet --indicator
+
+# this makes the popup window for mic access small and stickied instead of an
+# # extra window, this will work until it's fixed in firefox
+for_window [title="\ -\ Sharing\ Indicator$"] floating enable, sticky enable
+
+### Startup
+## reach systemd target
+include /etc/sway/config.d/*
+
+
+# Environment variables =======================================================
+#
+# WAYLAND_DISPLAY is required for Wayland-native apps to run.
+# SWAYSOCK is required by xdg-desktop-portal-wlr and waybar.
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK SSH_AUTH_SOCK XDG_CURRENT_DESKTOP DBUS_SESSION_BUS_ADDRESS XDG_RUNTIME_DIR XAUTHORITY
+
+# Required for portals (including screen sharing):
+exec systemctl --user set-environment XDG_CURRENT_DESKTOP=sway
+
+# https://github.com/systemd/systemd/issues/14489
+# Affects apps like older Qts, etc.
+exec systemctl --user set-environment XDG_SESSION_TYPE=wayland
+
+# Start services that rely on the compositor being up.
+exec systemctl --user start sway-session.target
+# =============================================================================

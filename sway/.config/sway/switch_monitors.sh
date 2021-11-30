@@ -42,8 +42,8 @@ if [ $internal_active == "true" ]; then
 
 	echo "Internal active, switching to external"
 	
-	swaymsg output $l_external enable mode 2560x2160 scale 1 pos 0 0    
-	swaymsg output $r_external enable mode 2560x2160 scale 1 pos 2560 0 
+	swaymsg output $l_external enable mode 2560x2160@60Hz scale 1 pos 0 0    
+	swaymsg output $r_external enable mode 2560x2160@60Hz scale 1 pos 2560 0 
 	swaymsg output $m_internal enable mode 2560x1440 scale 1 pos 5120 1221 
 
 	# Moving the workspaces needs to be done first
