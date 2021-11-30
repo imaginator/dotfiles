@@ -1,0 +1,19 @@
+# This is basically upstream with a patch for https://github.com/systemd/systemd/issues/20366
+# If systemd confirms that it's a bug, then this can be dropped eventually.
+# If systemd confirms that's not a bug, then I'll upstream this.
+
+[Unit]
+Description=Lightweight Wayland notification daemon
+Documentation=man:mako(1)
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=org.freedesktop.Notifications
+ExecCondition=/bin/sh -c '[ -n "$WAYLAND_DISPLAY" ]'
+ExecStart=/usr/bin/mako
+ExecReload=/usr/bin/makoctl reload
+
+[Install]
+WantedBy=graphical-session.target
