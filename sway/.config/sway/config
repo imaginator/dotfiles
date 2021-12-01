@@ -1,59 +1,25 @@
 # vim:ft=i3config 
 
-# # Default config for sway
-#
-# Copy this to ~/.config/sway/config and edit it to your liking.
-#
-# Read `man 5 sway` for a complete reference.
-
-### Variables
-#
 # Logo key. Use Mod1 for Alt.
 set $mod Mod4
-# Your preferred application launcher
-# Note: pass the final command to swaymsg so that the resulting window can be opened
-# on the original workspace that the command was run on.
+
+#launcher
 set $menu dmenu_path | wofi --show drun -i | xargs swaymsg exec --                                                             
 
 include /etc/sway/config-vars.d/*
 
-### Output configuration
-#
-# Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg #000000 solid_color
-#R/usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
-#
-# Example configuration:
-#
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#output DP-1 position 0,0            resolution 5120x2160@29.995001Hz scale 1
-#output DP-2 position 2560,0         resolution 5120x2160@29.995001Hz scale 1
-#output eDP-1 position 5120,1221     resolution 2560x1440 scale 1
-output eDP-1    resolution 2560x1440 scale 1
-#output eDP-1 scale 1
-output DP-1 disable
-output DP-2 disable 
+output * bg #c9c9c9  solid_color
 
-#
-# You can get the names of your outputs by running: swaymsg -t get_outputs
+output DP-1  enable mode 2560x2160@60Hz scale 1 pos 0 0    
+output DP-2  enable mode 2560x2160@60Hz scale 1 pos 2560 0 
+output eDP-1 enable mode 2560x1440 scale 1 pos 5120 1221
+
+# screen toggle
+bindsym $mod+bracketleft  output DP-1 toggle, output DP-2 toggle
+bindsym $mod+bracketright  exec ~/.config/sway/switch_monitors.sh
 
 bindsym $mod+Escape exec swaylock -f -c 000000
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
 
-### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
 input "1739:0:Synaptics_TM3289-021" {
        natural_scroll enabled
 }
@@ -61,6 +27,7 @@ input "1739:0:Synaptics_TM3289-021" {
 input type:keyboard {
       xkb_options caps:super
 }
+
 
 #
 # You can get the names of your inputs by running: swaymsg -t get_inputs
@@ -215,10 +182,6 @@ bindsym $mod+Shift+Return   exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket"
 bindsym $mod+Shift+l        exec SSH_AUTH_SOCK="/run/user/1000/ssh-agent.socket" alacritty --title ln.imagilan            ---command ssh -p22 simon@ln.imagilan      -AXY   -t tmux new-session -s simon -A -D
 bindsym $mod+Shift+w        exec remmina -c ~/.local/share/remmina/group_rdp_local-windows_192-168-200-193.remmina
 
-# screen toggle
-bindsym $mod+bracketleft  output DP-1 toggle, output DP-2 toggle
-bindsym $mod+bracketright  exec ~/.config/sway/switch_monitors.sh
-
 # audio toggle
 bindsym $mod+Shift+bracketleft  exec pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo+input:analog-stereo        
 bindsym $mod+Shift+bracketright exec pactl set-card-profile alsa_card.pci-0000_00_1f.3 output:hdmi-stereo-extra1+input:analog-stereo 
@@ -275,6 +238,10 @@ exec --no-startup-id nm-applet --indicator
 # this makes the popup window for mic access small and stickied instead of an
 # # extra window, this will work until it's fixed in firefox
 for_window [title="\ -\ Sharing\ Indicator$"] floating enable, sticky enable
+
+
+  no_focus [app_id="firefox" title="^$"]
+  for_window [app_id="firefox" title="^$"] border none, floating enable, move position 79 ppt 88 ppt
 
 ### Startup
 ## reach systemd target
