@@ -240,9 +240,6 @@ exec --no-startup-id nm-applet --indicator
 for_window [title="\ -\ Sharing\ Indicator$"] floating enable, sticky enable
 
 
-  no_focus [app_id="firefox" title="^$"]
-  for_window [app_id="firefox" title="^$"] border none, floating enable, move position 79 ppt 88 ppt
-
 ### Startup
 ## reach systemd target
 include /etc/sway/config.d/*
