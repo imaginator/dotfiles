@@ -1,0 +1,4 @@
+```
+dconf load /  < dconf.settings
+```
+

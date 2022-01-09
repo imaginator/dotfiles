@@ -1,0 +1,12 @@
+[org/gnome/settings-daemon/plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Shift><Super>n'
+command='gnome-terminal --title furrow  --window-with-profile=furrow -- tmux new-session -s simon -A -D '
+name='local terminal'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
+binding='<Shift><Super>b'
+command='gnome-terminal --title bunker.imaginator.com  --window-with-profile=bunker -- ssh -p22 simon@bunker.imagilan  -Y   -t tmux new-session -s simon -A -D'
+name='ssh bunker'
