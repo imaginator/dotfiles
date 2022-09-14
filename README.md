@@ -8,6 +8,7 @@ sudo useradd simon2 -s /usr/bin/zsh -m -G simon -G sudo
 sudo passwd simon
 sudo chsh -s /bin/zsh simon 
 sudo usermod -a -G sudo,adm,systemd-journal simon
+sudo sh -c 'echo "$(logname) ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/$(logname)' && sudo chmod 440 /etc/sudoers.d/$(logname)
 sudo -i -u simon
 git clone https://github.com/imaginator/dotfiles.git
 cd dotfiles
