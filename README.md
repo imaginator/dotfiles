@@ -3,8 +3,8 @@
 Making things more like $HOME
 
 ```bash
-sudo apt-get install git tmux zsh vim stow
-sudo useradd simon2 -s /usr/bin/zsh -m -G simon -G sudo
+sudo apt-get install git tmux zsh vim stow htop strace ltrace
+sudo useradd simon -s /usr/bin/zsh -m -G simon -G sudo
 sudo passwd simon
 sudo chsh -s /bin/zsh simon 
 sudo usermod -a -G sudo,adm,systemd-journal simon
