@@ -38,7 +38,10 @@ ZSH_TMUX_AUTOQUIT="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(adb command-not-found git debian brew docker tmux)
+plugins=(adb command-not-found colorize colored-man-pages git debian brew docker tmux pip poetry history-substring-search pyenv) 
+
+# for plugin:colorize
+ZSH_COLORIZE_STYLE="colorful"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -46,5 +49,9 @@ source $ZSH/oh-my-zsh.sh
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export EDITOR=/usr/bin/vim
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
+
+# for pyenv (plugin installed into oh-my-zsh too)
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
