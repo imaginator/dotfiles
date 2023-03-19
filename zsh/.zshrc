@@ -38,7 +38,7 @@ ZSH_TMUX_AUTOQUIT="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(adb command-not-found colorize colored-man-pages git debian brew docker tmux pip poetry history-substring-search pyenv) 
+plugins=(adb command-not-found colorize colored-man-pages git debian brew kubectl docker tmux pip poetry history-substring-search pyenv) 
 
 # for plugin:colorize
 ZSH_COLORIZE_STYLE="colorful"
