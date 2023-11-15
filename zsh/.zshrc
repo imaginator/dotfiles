@@ -38,7 +38,7 @@ ZSH_TMUX_AUTOQUIT="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(adb command-not-found colorize colored-man-pages git debian brew kubectl docker tmux pip history-substring-search pyenv H-S-MW) 
+plugins=(adb command-not-found colorize colored-man-pages git debian brew kubectl docker tmux pip history-substring-search pyenv kubectl zsh-autosuggestions zsh-syntax-highlighting) 
 # for plugin:colorize
 ZSH_COLORIZE_STYLE="colorful"
 
@@ -50,7 +50,7 @@ export LC_ALL="en_US.UTF-8"
 export EDITOR=/usr/bin/vim
 export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
 
-# for pyenv (plugin installed into oh-my-zsh too)
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+[ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
+[ -x "$(command -v helm)" ] && source <(helm completion zsh)
+
+
