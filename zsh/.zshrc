@@ -38,7 +38,23 @@ ZSH_TMUX_AUTOQUIT="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(adb command-not-found colorize colored-man-pages git debian brew kubectl docker tmux pip history-substring-search pyenv kubectl zsh-autosuggestions zsh-syntax-highlighting) 
+plugins=(
+    adb
+    brew
+    colored-man-pages
+    colorize
+    command-not-found
+    docker
+    git debian
+    history-substring-search
+    kubectl
+    kubectl
+    pip
+    pyenv
+    tmux
+    zsh-autosuggestions 
+    zsh-syntax-highlighting
+    ) 
 # for plugin:colorize
 ZSH_COLORIZE_STYLE="colorful"
 
@@ -52,5 +68,3 @@ export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
 
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
 [ -x "$(command -v helm)" ] && source <(helm completion zsh)
-
-
