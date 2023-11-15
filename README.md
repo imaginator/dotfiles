@@ -20,3 +20,15 @@ zsh
 # from another machine
 ssh-copy-id -i .ssh/id_simon  simon@<new-machine>
 ```
+
+Other things:
+
+keyboard is defined as being `Macintosh ISO layout (International English)`
+
+```bash
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+mac')]"
+gsettings set org.gnome.desktop.input-sources xkb-options "['compose:ralt']" # set compose character
+```
+- For ä you press Compose,", a
+- For € you press Compose,=, e
+- For £ you press Compose,-, l.
