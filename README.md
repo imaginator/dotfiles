@@ -5,6 +5,7 @@ Making things more like $HOME
 ```bash
 sudo sh -c 'echo "$(logname) ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/$(logname)' && sudo chmod 440 /etc/sudoers.d/$(logname)
 sudo apt-get install git tmux zsh vim stow htop strace ltrace zsh-syntax-highlighting
+sudo update-alternatives --set editor /usr/bin/vim.basic
 sudo useradd simon -s /usr/bin/zsh -m -G simon -G sudo
 sudo passwd simon
 sudo chsh -s /bin/zsh simon 
