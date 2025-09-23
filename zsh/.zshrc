@@ -71,3 +71,6 @@ export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
 
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
 [ -x "$(command -v helm)" ] && source <(helm completion zsh)
+[[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
+
+
