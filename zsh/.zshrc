@@ -13,6 +13,9 @@ DEFAULT_USER="simon"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias 'dus=du -sckx * | sort -nr'
 
+# Podman Docker alias
+alias docker=podman
+DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 
 # Set to this to use case-sensitive completion
 # CASE_SENSITIVE="true"
