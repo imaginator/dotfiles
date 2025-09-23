@@ -1,3 +1,5 @@
 [user]
 	name = Simon Tennant
 	email = simon@imaginator.com
+[init]
+	defaultBranch = master
