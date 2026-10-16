@@ -1,5 +1,12 @@
 execute pathogen#infect()
 syntax enable
+
+" Ask the terminal for its background color (OSC 11) so vim follows the
+" window's theme: Solarized Light in the bunker window, Dark locally.
+" Vim flips 'background' (and reloads the colorscheme) when the reply
+" doesn't match. 'set background=dark' remains the fallback for terminals
+" that don't answer. Check the reply with :echo v:termrbgresp
+let &t_RB = "\e]11;?^G"
 set background=dark
 colorscheme solarized
 
@@ -44,14 +51,20 @@ set shiftwidth=2
 set expandtab
 
 " some mappings
-map <F2> :%s/^V^M//g# Convert DOS textfile to UNIX
-map <F3> :!bash # Run bash 
-map <F5> :w# Write to file 
-map <F6> :e # Edit file (type in file name) 
-map <F7> :make # Run make in current directory 
+map <F2> :%s/^V^M//g
+" Convert DOS textfile to UNIX
+map <F3> :!bash
+" Run bash
+" Write to file
+map <F5> :w
+" Edit file (type in file name)
+map <F6> :e
+" Run make in current directory
+map <F7> :make
 map <F8> :w<CR>:!aspell -d en_GB -e -c %<CR>:e<CR>
 map <F9> :w<CR>:!aspell -d de_DE -e -c %<CR>:e<CR>
-map <F12> :q!# Quit without saving 
+" Quit without saving
+map <F12> :q!
 map  !}fmt -72
 
 set nocompatible
