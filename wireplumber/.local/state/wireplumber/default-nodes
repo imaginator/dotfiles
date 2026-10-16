@@ -1,0 +1,12 @@
+[default-nodes]
+default.configured.audio.sink=bluez_output.F4:9D:8A:7B:86:8C
+default.configured.audio.sink.0=bluez_output.F4_9D_8A_7B_86_8C.1
+default.configured.audio.sink.1=bluez_output.38:5C:76:43:D9:37
+default.configured.audio.sink.2=bluez_output.38_5C_76_43_D9_37.1
+default.configured.audio.sink.3=alsa_output.pci-0000_c4_00.1.HiFi__HDMI4__sink
+default.configured.audio.sink.4=alsa_output.pci-0000_c4_00.6.HiFi__Speaker__sink
+default.configured.audio.source=bluez_input.F4:9D:8A:7B:86:8C
+default.configured.audio.source.0=bluez_input.F4_9D_8A_7B_86_8C.0
+default.configured.audio.source.1=bluez_input.38:5C:76:43:D9:37
+default.configured.audio.source.2=bluez_input.38_5C_76_43_D9_37.0
+default.configured.audio.source.3=alsa_input.pci-0000_c4_00.6.HiFi__Mic1__source
