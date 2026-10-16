@@ -2,9 +2,17 @@
 # Ghostty Base Configuration (~/.config/ghostty/config)
 # =============================================
 
-window-width = 100
-  
-# nice title bar showing the hostname
-shell-integration = detect
-shell-integration-features = title
-title = %{user}@%{hostname}
+window-width = 140
+window-height = 50
+
+# local sessions are dark; the bunker wrapper overrides this with
+# --theme="iTerm2 Solarized Light"
+theme = iTerm2 Solarized Dark
+
+# nice title bar showing hostname
+shell-integration = zsh
+quit-after-last-window-closed = true
+confirm-close-surface = false
+# no-title: let zsh own the titlebar so user@host is always shown,
+# even while a command is running
+shell-integration-features = no-title, ssh-env

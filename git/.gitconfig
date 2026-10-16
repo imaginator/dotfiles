@@ -3,3 +3,5 @@
 	email = simon@imaginator.com
 [init]
 	defaultBranch = master
+[commit]
+	gpgsign = true

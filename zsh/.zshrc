@@ -42,19 +42,23 @@ ZSH_TMUX_AUTOQUIT="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
-    adb
-    brew
+    ansible
     colored-man-pages
     colorize
     command-not-found
-    docker
-    git debian
+    git 
+    grc
+    helm
     history-substring-search
     kubectl
-    kubectl
     pip
+    podman
     pyenv
+    ssh
+    ssh-agent
+    sudo
     tmux
+    ubuntu
     zsh-autosuggestions 
     zsh-syntax-highlighting
     ) 
@@ -69,8 +73,22 @@ export LC_ALL="en_US.UTF-8"
 export EDITOR=/usr/bin/vim
 export LESS='-F -g -i -M -R -S -w -X -z-4'   # command line options for less
 
+# Window title: always user@host — cwd at the prompt, command while running
+precmd() {
+  print -Pn "\e]0;%n@%m: %~\a"
+}
+preexec() {
+  local cmd=${1//[^[:print:]]/}
+  print -Pn "\e]0;%n@%m: $cmd\a"
+}
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
+
+# Source tool completions AFTER compinit so they aren't wiped from _comps
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
 [ -x "$(command -v helm)" ] && source <(helm completion zsh)
 [[ "$TERM_PROGRAM" == "vscode" ]] && . "$(code --locate-shell-integration-path zsh)"
-
-
